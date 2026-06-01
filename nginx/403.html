@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>403 — Acceso Denegado · WAF-ML</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0b;
+      --surface:   #111113;
+      --border:    rgba(255,255,255,0.06);
+      --border-hi: rgba(255,255,255,0.12);
+      --red:       #e84343;
+      --red-dim:   rgba(232,67,67,0.08);
+      --red-glow:  rgba(232,67,67,0.18);
+      --text-1:    #f0ede8;
+      --text-2:    rgba(240,237,232,0.45);
+      --text-3:    rgba(240,237,232,0.22);
+      --mono:      'IBM Plex Mono', monospace;
+      --display:   'Syne', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--mono);
+      overflow: hidden;
+    }
+
+    /* ── Grid noise texture ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Red ambient glow ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(232,67,67,0.10) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50%       { opacity: 1.0; }
+    }
+
+    /* ── Layout ── */
+    .shell {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 28px 36px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .shield-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .topbar-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-2);
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    /* ── Main content ── */
+    .main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+      padding: 40px 0;
+    }
+
+    .code-line {
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .headline-group {
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .big-403 {
+      font-family: var(--display);
+      font-size: clamp(96px, 16vw, 180px);
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -0.03em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(240,237,232,0.08);
+      user-select: none;
+      pointer-events: none;
+      margin-bottom: -16px;
+    }
+
+    .headline {
+      font-family: var(--display);
+      font-size: clamp(22px, 3.5vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--text-1);
+    }
+
+    .headline span {
+      color: var(--red);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--red);
+      margin: 28px 0;
+      animation: expandW 0.8s 0.4s ease both;
+    }
+
+    @keyframes expandW {
+      from { width: 0; opacity: 0; }
+      to   { width: 48px; opacity: 1; }
+    }
+
+    /* ── Info block ── */
+    .info-block {
+      animation: fadeUp 0.6s 0.35s ease both;
+    }
+
+    .info-block p {
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--text-2);
+      max-width: 520px;
+    }
+
+    /* ── Terminal card ── */
+    .terminal {
+      margin-top: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 8px;
+      overflow: hidden;
+      animation: fadeUp 0.6s 0.45s ease both;
+      max-width: 560px;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .tb { width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.08); }
+
+    .terminal-body {
+      padding: 18px 20px;
+      font-size: 12px;
+      line-height: 2;
+      color: var(--text-2);
+    }
+
+    .terminal-body .key   { color: var(--text-3); }
+    .terminal-body .val   { color: var(--text-1); }
+    .terminal-body .alert { color: var(--red); }
+
+    /* ── Footer ── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.6s 0.55s ease both;
+    }
+
+    .footer-left {
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-right {
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Scan line effect ── */
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: 0.4;
+      animation: scan 3.5s linear infinite;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @keyframes scan {
+      0%   { top: 0;    opacity: 0; }
+      5%   { opacity: 0.4; }
+      95%  { opacity: 0.4; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* ── Keyframes ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .shell { padding: 20px 20px; }
+      .big-403 { font-size: 96px; }
+      .footer { flex-direction: column; gap: 8px; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<div class="shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <svg class="shield-icon" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 2L3 5.5V10C3 14.418 6.582 18.51 11 20C15.418 18.51 19 14.418 19 10V5.5L11 2Z"
+              stroke="rgba(240,237,232,0.3)" stroke-width="1.2" fill="none"/>
+        <path d="M8 11L10 13L14 9" stroke="#e84343" stroke-width="1.4"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="topbar-label">WAF-ML Engine · v1.0 · USAT 2026</span>
+    </div>
+    <div class="status-pill">
+      <span class="dot"></span>
+      Amenaza bloqueada
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="code-line">// HTTP 403 · Forbidden · Request intercepted</div>
+
+    <div class="headline-group">
+      <div class="big-403" aria-hidden="true">403</div>
+      <h1 class="headline">
+        Acceso Denegado por<br>
+        <span>Políticas de Seguridad</span>
+      </h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="info-block">
+      <p>
+        Esta solicitud fue interceptada y bloqueada por el motor de detección
+        basado en machine learning.
+      </p>
+    </div>
+
+    <!-- Terminal card -->
+    <div class="terminal" role="complementary" aria-label="Detalle del evento de seguridad">
+      <div class="terminal-bar">
+        <div class="tb"></div>
+        <div class="tb"></div>
+        <div class="tb"></div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="key">evento       </span><span class="alert">REQUEST_BLOCKED</span></div>
+        <div><span class="key">motor        </span><span class="val">LightGBM</span></div>
+        <div><span class="key">veredicto    </span><span class="alert">BLOCK · score &gt; 0.80</span></div>
+        <div><span class="key">capas_waf    </span><span class="val">Nginx → Heurístico → ML Engine</span></div>
+        <div><span class="key">estado       </span><span class="val">Registrado en telemetría</span></div>
+        <div><span class="key">referencia   </span><span class="val">OWASP Top 10 · A05 Injection</span></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-left">
+      Web Application Firewall open source · Fernandez Alva, E. · USAT Chiclayo, Perú
+    </span>
+    <span class="footer-right">
+      Si crees que esto es un error, contacta al administrador del sistema.
+    </span>
+  </footer>
+
+</div>
+
+</body>
+</html>

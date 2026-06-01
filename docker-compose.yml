@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # --- SISTEMA PYME (ATEL) ---
+  atel-back:
+    build: ./atel-back
+    container_name: pyme-php-backend
+    networks:
+      - waf-backend # Aislado del exterior
+
+  atel-front:
+    build: ./atel-front
+    container_name: pyme-react-frontend
+    networks:
+      - waf-backend # Solo accesible vía Proxy
+
+  atel-db:
+      image: postgres:15-alpine
+      container_name: pyme-db
+      environment:
+        POSTGRES_USER: atel_user
+        POSTGRES_PASSWORD: atel_password
+        POSTGRES_DB: atel_inventory
+      networks:
+        - waf-backend
+
+  # --- INFRAESTRUCTURA WAF ---
+
+  # Capa 3: Base de Datos (PostgreSQL)
+  database:
+    image: postgres:15-alpine
+    container_name: waf-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: waf_db
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - waf-backend
+  # Capa 2: Motor de Machine Learning
+  ml-engine:
+    build: ./ml-engine
+    container_name: waf-ml-engine
+    networks:
+      - waf-backend
+    volumes:
+      - ./ml-engine:/app
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    depends_on:
+      - database
+    environment:
+      - DATABASE_URL=postgresql://user:pass@database:5432/waf_db
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+
+  # Capa 1: Reverse Proxy (Nginx)
+  proxy:
+    image: nginx:alpine
+    container_name: waf-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/403.html:/usr/share/nginx/html/403.html:ro
+      - ./nginx/pyme_index.html:/usr/share/nginx/html/pyme/pyme_index.html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - waf-frontend
+      - waf-backend
+    depends_on:
+      - ml-engine
+      - atel-front
+      - atel-back
+
+  vpn:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: waf-vpn
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Lima
+      - SERVERURL=tu.ip.publica.o.dynamic.dns # Opcional para simulación
+      - PEERS=1 # Genera 1 cliente (puedes poner 'admin,trabajador1')
+      - PEERDNS=auto 
+      - INTERNAL_IT_ADDRESS=10.13.13.0 # Red interna de la VPN
+    ports:
+      - "51820:51820/udp"
+    volumes:
+      - ./config:/config
+    networks:
+      - waf-frontend
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    
+networks:
+  waf-frontend:
+    external: true
+  waf-backend:
+    driver: bridge
+    external: true # Esta red está aislada de internet

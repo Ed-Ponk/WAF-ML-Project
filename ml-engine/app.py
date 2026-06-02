@@ -181,7 +181,8 @@ async def startup():
             await asyncio.sleep(3) # Espera 3 segundos antes de reintentar
     
     if not db_pool:
-        sys.exit("❌ No se pudo conectar a la base de datos tras varios intentos")
+        print("⚠️ ADVERTENCIA: Iniciando en modo LOCAL. Los logs no se guardarán en la DB.")
+        db_pool = None
 
 @app.on_event("shutdown")
 async def shutdown():

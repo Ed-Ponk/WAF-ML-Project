@@ -12,3 +12,12 @@ Thumbs.db
 
 # modelos
 # *.pkl
+
+.env
+
+# VPN — configuración sensible
+config/
+
+# Base de datos local
+*.sql.bak
+"@ | Out-File -FilePath D:\WAF\.gitignore -Encoding UTF8

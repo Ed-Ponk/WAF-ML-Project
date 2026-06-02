@@ -1,60 +1,54 @@
 version: '3.8'
 
 services:
-  # --- SISTEMA PYME (ATEL) ---
-  atel-back:
-    build: ./atel-back
-    container_name: pyme-php-backend
-    networks:
-      - waf-backend # Aislado del exterior
-
-  atel-front:
-    build: ./atel-front
-    container_name: pyme-react-frontend
-    networks:
-      - waf-backend # Solo accesible vía Proxy
-
-  atel-db:
-      image: postgres:15-alpine
-      container_name: pyme-db
-      environment:
-        POSTGRES_USER: atel_user
-        POSTGRES_PASSWORD: atel_password
-        POSTGRES_DB: atel_inventory
-      networks:
-        - waf-backend
-
-  # --- INFRAESTRUCTURA WAF ---
-
-  # Capa 3: Base de Datos (PostgreSQL)
+  # ── Base de datos de telemetría ──────────────────────────────────
   database:
     image: postgres:15-alpine
     container_name: waf-db
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: waf_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - waf_db_data:/var/lib/postgresql/data
     networks:
       - waf-backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
   # Capa 2: Motor de Machine Learning
   ml-engine:
     build: ./ml-engine
     container_name: waf-ml-engine
+    restart: unless-stopped
     networks:
       - waf-backend
     volumes:
       - ./ml-engine:/app
-    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    command: uvicorn app:app --host 0.0.0.0 --port ${ML_ENGINE_PORT}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://user:pass@database:5432/waf_db
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}
+      - THRESHOLD_BLOCK=${THRESHOLD_BLOCK}
+      - THRESHOLD_LOG=${THRESHOLD_LOG}
+      - WAF_DEBUG=${WAF_DEBUG}
     deploy:
       resources:
         limits:
-          memory: 800M
+          memory: ${ML_MEMORY_LIMIT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${ML_ENGINE_PORT}/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
 
   # Capa 1: Reverse Proxy (Nginx)
   proxy:
@@ -71,35 +65,42 @@ services:
       - waf-backend
     depends_on:
       - ml-engine
-      - atel-front
-      - atel-back
 
   vpn:
     image: lscr.io/linuxserver/wireguard:latest
     container_name: waf-vpn
+    restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Lima
-      - SERVERURL=tu.ip.publica.o.dynamic.dns # Opcional para simulación
+      - TZ=${TZ}
+      - SERVERURL=auto
       - PEERS=1 # Genera 1 cliente (puedes poner 'admin,trabajador1')
-      - PEERDNS=auto 
-      - INTERNAL_IT_ADDRESS=10.13.13.0 # Red interna de la VPN
+      - PEERDNS=auto
     ports:
       - "51820:51820/udp"
     volumes:
-      - ./config:/config
+      - ./config/vpn:/config
     networks:
       - waf-frontend
+      - waf-backend
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+
+  # Backend simulado PYME — app web de prueba (Si se logra integrar el WAF con la app pyme, entonces comentar todo este servicio)
+  #pyme-app-back:
+    #image: nginx:alpine
+    #container_name: waf-pyme-back
+    #volumes:
+     # - ./nginx/pyme_index.html:/usr/share/nginx/html/index.html:ro
+    #networks:
+    # - waf-backend
     
 networks:
   waf-frontend:
-    external: true
+    driver: bridge  
   waf-backend:
-    driver: bridge
-    external: true # Esta red está aislada de internet
+    driver: bridge  

@@ -42,11 +42,11 @@ services:
         limits:
           memory: ${ML_MEMORY_LIMIT}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${ML_ENGINE_PORT}/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${ML_ENGINE_PORT}/health', timeout=5)"]
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 40s
+      start_period: 50s
 
 
   # Capa 1: Reverse Proxy (Nginx)

@@ -30,7 +30,12 @@ lgbm_encoders = bundle["lgbm_encoders"]
 
 app = FastAPI(title="WAF-ML Hybrid Engine", version="2.0")
 db_pool = None
-DATABASE_URL = "postgresql://user:pass@database:5432/waf_db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://waf_user:waf_pass@database:5432/waf_db")
+
+# ── Health check — usado por Docker para marcar el contenedor healthy ──
+@app.get("/health")
+async def health():
+    return {"status": "ok", "model": MODEL_PATH}
 
 # ══════════════════════════════════════════════════════════════════
 # 2. EXTRACCIÓN DE CARACTERÍSTICAS (Sincronizada con tu dataset)

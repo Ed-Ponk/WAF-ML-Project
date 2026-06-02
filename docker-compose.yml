@@ -59,6 +59,11 @@ services:
       - ./nginx/403.html:/usr/share/nginx/html/403.html:ro
       - ./nginx/pyme_index.html:/usr/share/nginx/html/pyme/pyme_index.html:ro
       - ./nginx/default.conf:/etc/nginx/templates/default.conf.template:ro
+    env_file:
+      - .env
+    environment:
+      - PYME_BACKEND_URL
+      - ML_ENGINE_PORT
     networks:
       - waf-frontend
       - waf-backend

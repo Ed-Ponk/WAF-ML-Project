@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # ── Base de datos de telemetría ──────────────────────────────────
@@ -104,3 +103,6 @@ networks:
     driver: bridge  
   waf-backend:
     driver: bridge  
+
+volumes:
+  waf_db_data:

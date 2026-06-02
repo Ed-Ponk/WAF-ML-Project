@@ -86,5 +86,5 @@ docker compose exec database psql -U waf_user -d waf_db -c 'SELECT * FROM vw_con
 
 ---
 
-**Autor:** Edu Fernandez Alva (Arnold)
+**Autor:** Edu Fernandez Alva
 **Institución:** Universidad Católica Santo Toribio de Mogrovejo — USAT 2026

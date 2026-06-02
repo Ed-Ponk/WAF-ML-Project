@@ -6,6 +6,9 @@
 
 set -e
 
+# ── Directorio raíz del proyecto (donde vive este script) ─────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # ── Colores ───────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -63,27 +66,33 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null 2>&1; then
     echo -e "${RED}❌ Docker Compose no está instalado${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}✅ Docker disponible$(docker --version)${NC}"
+echo -e "${GREEN}✅ Docker disponible: $(docker --version)${NC}"
 
 # ── Verificar que el backend es accesible ────────────────────────
 echo -e "${YELLOW}[2/6] Verificando conexión al backend...${NC}"
-if curl -s --max-time 5 "$BACKEND_URL" > /dev/null 2>&1; then
-    echo -e "${GREEN}✅ Backend accesible: $BACKEND_URL${NC}"
+
+# Se usa || true para que set -e no mate el script si curl falla o no existe
+if command -v curl &> /dev/null; then
+    if curl -s --max-time 5 "$BACKEND_URL" > /dev/null 2>&1; then
+        echo -e "${GREEN}✅ Backend accesible: $BACKEND_URL${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Backend no responde en $BACKEND_URL${NC}"
+        echo "   El WAF se instalará de todas formas."
+        echo "   Asegúrate de que tu servidor esté corriendo antes de usar el WAF."
+    fi
 else
-    echo -e "${YELLOW}⚠️  Backend no responde en $BACKEND_URL${NC}"
-    echo "   El WAF se instalará de todas formas."
-    echo "   Asegúrate de que tu servidor esté corriendo antes de usar el WAF."
+    echo -e "${YELLOW}⚠️  curl no disponible — omitiendo verificación del backend${NC}"
 fi
 
-# ── Generar .env ─────────────────────────────────────────────────
+# ── Generar .env junto al docker-compose.yml ──────────────────────
 echo -e "${YELLOW}[3/6] Generando configuración...${NC}"
 
-cat > .env << EOF
+cat > "$SCRIPT_DIR/.env" << EOF
 # WAF-ML — Configuración generada automáticamente
 # Generado: $(date)
 
@@ -105,15 +114,22 @@ TZ=America/Lima
 WAF_DEBUG=false
 EOF
 
-echo -e "${GREEN}✅ Archivo .env generado${NC}"
+# Verificar que el .env se creó correctamente antes de continuar
+if [ ! -f "$SCRIPT_DIR/.env" ]; then
+    echo -e "${RED}❌ Error: no se pudo crear el archivo .env en $SCRIPT_DIR${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Archivo .env generado en: $SCRIPT_DIR/.env${NC}"
 
 # ── Crear directorios necesarios ──────────────────────────────────
 echo -e "${YELLOW}[4/6] Preparando estructura de archivos...${NC}"
-mkdir -p config/vpn
+mkdir -p "$SCRIPT_DIR/config/vpn"
 echo -e "${GREEN}✅ Directorios creados${NC}"
 
-# ── Levantar contenedores ─────────────────────────────────────────
+# ── Levantar contenedores desde el directorio correcto ───────────
 echo -e "${YELLOW}[5/6] Iniciando WAF-ML...${NC}"
+cd "$SCRIPT_DIR"
 docker compose down --remove-orphans 2>/dev/null || true
 docker compose up -d --build
 

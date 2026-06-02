@@ -67,6 +67,7 @@ services:
     networks:
       - waf-frontend
       - waf-backend
+      - pyme-security-net
     depends_on:
       - ml-engine
 
@@ -108,6 +109,8 @@ networks:
     driver: bridge  
   waf-backend:
     driver: bridge  
+  pyme-security-net:
+    external: true
 
 volumes:
   waf_db_data:

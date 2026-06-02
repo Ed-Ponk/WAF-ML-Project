@@ -177,7 +177,7 @@ async def startup():
     retries = 5
     while retries > 0:
         try:
-            db_pool = await asyncpg.create_pool("postgresql://user:pass@database:5432/waf_db")
+            db_pool = await asyncpg.create_pool(DATABASE_URL)
             print("✅ Conexión a PostgreSQL establecida")
             break
         except Exception as e:

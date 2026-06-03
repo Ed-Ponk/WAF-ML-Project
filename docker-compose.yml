@@ -51,7 +51,7 @@ services:
 
   # Capa 1: Reverse Proxy (Nginx)
   proxy:
-    image: nginx:alpine
+    image: nginx:latest
     container_name: waf-proxy
     ports:
       - "80:80"

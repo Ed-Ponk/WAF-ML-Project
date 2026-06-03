@@ -21,3 +21,5 @@ config/
 # Base de datos local
 *.sql.bak
 "@ | Out-File -FilePath D:\WAF\.gitignore -Encoding UTF8
+
+tests/

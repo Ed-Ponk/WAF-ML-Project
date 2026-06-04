@@ -212,8 +212,12 @@ async def waf_core(request: Request, path_name: str):
     url_inspect   = unquote(original_url).lower()
     client_ip     = request.headers.get("x-real-ip", request.client.host)
 
+    payload = ""
+    f_dict = {"url_path_len": 0, "payload_entropy": 0}
+    score = 0.50
+
     try:
-        body = await request.body()
+        body = await asyncio.wait_for(request.body(), timeout=1.0)
         payload = body.decode("utf-8", errors="ignore") 
 
         # === DEBUG SIEMPRE ===
@@ -224,9 +228,9 @@ async def waf_core(request: Request, path_name: str):
         df_features = extract_features(request.method, url_inspect, payload)
         f_dict = df_features.iloc[0].to_dict()
 
-        print(f"🔍 DEBUG FEATURES: {len(df_features.columns)} columnas generadas")
-        print(f"🔍 Columnas: {sorted(df_features.columns.tolist())}")
-        print(f"🔍 DEBUG FEATURES DICT: {f_dict}")
+        #print(f"🔍 DEBUG FEATURES: {len(df_features.columns)} columnas generadas")
+        #print(f"🔍 Columnas: {sorted(df_features.columns.tolist())}")
+        #print(f"🔍 DEBUG FEATURES DICT: {f_dict}")
 
         # CAPA 1: Descarte Rápido
         if (original_method == "GET" and
@@ -241,9 +245,12 @@ async def waf_core(request: Request, path_name: str):
             print("🔄 Usando inferencia ML completa...")
             score = await get_ensemble_score(df_features)
         
-    except Exception as e:
-        print(f"❌ Error crítico: {e}")
-        score, f_dict = 0.50, {"url_path_len": 0}
+    except asyncio.TimeoutError:
+        print("⚠️ Timeout: No se recibió el cuerpo, procesando solo URL")
+        payload = ""
+        df_features = extract_features(request.method, url_inspect, payload)
+        f_dict = df_features.iloc[0].to_dict()
+        score = await get_ensemble_score(df_features)
 
     # Lógica de Tres Zonas
     if score >= 0.70:   verdict, action = 1, "BLOCK"

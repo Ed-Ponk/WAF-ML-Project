@@ -23,3 +23,9 @@ config/
 "@ | Out-File -FilePath D:\WAF\.gitignore -Encoding UTF8
 
 tests/
+
+openspec/
+
+.atl
+
+ml-engine/log.txt

@@ -194,6 +194,27 @@ async def shutdown():
     if db_pool:
         await db_pool.close()
 
+def _should_use_fast_path(original_method: str, f_dict: dict) -> bool:
+    """Determina si una solicitud GET limpia puede saltarse la inferencia ML.
+
+    La heurística de descarte rápido evita llamar al ensemble LGBM+MLP
+    para tráfico GET legítimo que claramente no contiene ataques.
+
+    El umbral count_special_chars <= 15 permite URLs REST normales
+    (ej: /api/v1/users/123/posts?page=1&limit=10 tiene ~9 caracteres
+    especiales según la regex [^\\w\\s]) mientras sigue bloqueando
+    URLs heavily obfuscated.
+    """
+    return (
+        original_method == "GET"
+        and f_dict.get('has_any_injection', 0) == 0
+        and f_dict.get('count_special_chars', 0) <= 15
+        and f_dict.get('payload_entropy', 0) < 1.0
+        and not f_dict.get('has_sql', 0)
+        and not f_dict.get('has_xss', 0)
+    )
+
+
 # ══════════════════════════════════════════════════════════════════
 # 5. ENDPOINT PRINCIPAL (TRES ZONAS)
 # ══════════════════════════════════════════════════════════════════
@@ -233,12 +254,7 @@ async def waf_core(request: Request, path_name: str):
         #print(f"🔍 DEBUG FEATURES DICT: {f_dict}")
 
         # CAPA 1: Descarte Rápido
-        if (original_method == "GET" and
-            f_dict['has_any_injection'] == 0 and
-            f_dict['count_special_chars'] <= 2 and
-            f_dict['payload_entropy'] < 1.0 and
-            not f_dict.get('has_sql', 0) and
-            not f_dict.get('has_xss', 0)):
+        if _should_use_fast_path(original_method, f_dict):
             score = 0.05
             print("⚡ Fast path — tráfico limpio aprobado")
         else:
@@ -250,7 +266,16 @@ async def waf_core(request: Request, path_name: str):
         payload = ""
         df_features = extract_features(request.method, url_inspect, payload)
         f_dict = df_features.iloc[0].to_dict()
-        score = await get_ensemble_score(df_features)
+
+        # Fast path también aplica cuando no hay cuerpo (ej: auth_request de nginx).
+        # En este contexto, request.method es GET (subrequest auth_request).
+        # Usamos request.method en lugar de original_method porque sin cuerpo
+        # no hay diferencia entre GET y POST para el análisis de URL.
+        if _should_use_fast_path(request.method, f_dict):
+            score = 0.05
+            print("⚡ Fast path — tráfico limpio aprobado (timeout handler)")
+        else:
+            score = await get_ensemble_score(df_features)
 
     # Lógica de Tres Zonas
     if score >= 0.70:   verdict, action = 1, "BLOCK"

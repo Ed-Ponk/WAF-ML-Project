@@ -1,7 +1,7 @@
 #!/bin/bash
 # ══════════════════════════════════════════════════════════════════
 # WAF-ML — Script de Instalación para PYMES (Linux/Mac)
-# Uso: ./instalar_waf.sh --backend http://mi-servidor:3000
+# Uso: ./instalar_waf.sh [--port <puerto>]
 # ══════════════════════════════════════════════════════════════════
 
 set -e
@@ -26,24 +26,21 @@ echo "╚═══════════════════════�
 echo -e "${NC}"
 
 # ── Argumentos ───────────────────────────────────────────────────
-BACKEND_URL=""
 WAF_PORT=80
 DB_PASSWORD="waf_$(openssl rand -hex 8)"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --backend) BACKEND_URL="$2"; shift ;;
         --port)    WAF_PORT="$2";    shift ;;
         --help)
-            echo "Uso: ./instalar_waf.sh --backend <URL> [--port <puerto>]"
+            echo "Uso: ./instalar_waf.sh [--port <puerto>]"
             echo ""
             echo "Opciones:"
-            echo "  --backend  URL de tu servidor/aplicación (requerido)"
             echo "  --port     Puerto del WAF (default: 80)"
             echo ""
             echo "Ejemplos:"
-            echo "  ./instalar_waf.sh --backend http://localhost:8080"
-            echo "  ./instalar_waf.sh --backend http://192.168.1.5:3000 --port 8888"
+            echo "  ./instalar_waf.sh"
+            echo "  ./instalar_waf.sh --port 8888"
             exit 0
             ;;
         *) echo -e "${RED}❌ Argumento desconocido: $1${NC}"; exit 1 ;;
@@ -52,13 +49,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # ── Validaciones ──────────────────────────────────────────────────
-echo -e "${YELLOW}[1/6] Verificando requisitos...${NC}"
-
-if [ -z "$BACKEND_URL" ]; then
-    echo -e "${RED}❌ Error: --backend es requerido${NC}"
-    echo "   Ejemplo: ./instalar_waf.sh --backend http://localhost:8080"
-    exit 1
-fi
+echo -e "${YELLOW}[1/5] Verificando requisitos...${NC}"
 
 if ! command -v docker &> /dev/null; then
     echo -e "${RED}❌ Docker no está instalado${NC}"
@@ -73,30 +64,33 @@ fi
 
 echo -e "${GREEN}✅ Docker disponible: $(docker --version)${NC}"
 
-# ── Verificar que el backend es accesible ────────────────────────
-echo -e "${YELLOW}[2/6] Verificando conexión al backend...${NC}"
+# ── Verificar que los proyectos PYME existen ─────────────────────
+echo -e "${YELLOW}[2/5] Verificando proyectos PYME...${NC}"
 
-# Se usa || true para que set -e no mate el script si curl falla o no existe
-if command -v curl &> /dev/null; then
-    if curl -s --max-time 5 "$BACKEND_URL" > /dev/null 2>&1; then
-        echo -e "${GREEN}✅ Backend accesible: $BACKEND_URL${NC}"
-    else
-        echo -e "${YELLOW}⚠️  Backend no responde en $BACKEND_URL${NC}"
-        echo "   El WAF se instalará de todas formas."
-        echo "   Asegúrate de que tu servidor esté corriendo antes de usar el WAF."
-    fi
-else
-    echo -e "${YELLOW}⚠️  curl no disponible — omitiendo verificación del backend${NC}"
+PYME_FRONTEND_DIR="$SCRIPT_DIR/../../thesis/app-pyme/atel-front"
+PYME_BACKEND_DIR="$SCRIPT_DIR/../../thesis/app-pyme/atel-back"
+
+if [ ! -d "$PYME_FRONTEND_DIR" ] || [ ! -f "$PYME_FRONTEND_DIR/Dockerfile" ]; then
+    echo -e "${YELLOW}⚠️  Frontend PYME no encontrado en: $PYME_FRONTEND_DIR${NC}"
+    echo "   El WAF arrancará sin el frontend. Verifica la ruta del proyecto."
+    echo "   Ruta esperada (relativa): ../../thesis/app-pyme/atel-front"
 fi
 
+if [ ! -d "$PYME_BACKEND_DIR" ] || [ ! -f "$PYME_BACKEND_DIR/Dockerfile" ]; then
+    echo -e "${YELLOW}⚠️  Backend PYME no encontrado en: $PYME_BACKEND_DIR${NC}"
+    echo "   El WAF arrancará sin el backend. Verifica la ruta del proyecto."
+    echo "   Ruta esperada (relativa): ../../thesis/app-pyme/atel-back"
+fi
+
+echo -e "${GREEN}✅ Proyectos PYME verificados${NC}"
+
 # ── Generar .env junto al docker-compose.yml ──────────────────────
-echo -e "${YELLOW}[3/6] Generando configuración...${NC}"
+echo -e "${YELLOW}[3/5] Generando configuración...${NC}"
 
 cat > "$SCRIPT_DIR/.env" << EOF
 # WAF-ML — Configuración generada automáticamente
 # Generado: $(date)
 
-PYME_BACKEND_URL=${BACKEND_URL}
 WAF_PORT=${WAF_PORT}
 
 DB_USER=waf_user
@@ -109,6 +103,8 @@ ML_MEMORY_LIMIT=800M
 
 THRESHOLD_BLOCK=0.70
 THRESHOLD_LOG=0.40
+
+VITE_LINK_BACKEND=/api/v1
 
 TZ=America/Lima
 WAF_DEBUG=false
@@ -123,18 +119,18 @@ fi
 echo -e "${GREEN}✅ Archivo .env generado en: $SCRIPT_DIR/.env${NC}"
 
 # ── Crear directorios necesarios ──────────────────────────────────
-echo -e "${YELLOW}[4/6] Preparando estructura de archivos...${NC}"
+echo -e "${YELLOW}[4/5] Preparando estructura de archivos...${NC}"
 mkdir -p "$SCRIPT_DIR/config/vpn"
 echo -e "${GREEN}✅ Directorios creados${NC}"
 
-# ── Levantar contenedores desde el directorio correcto ───────────
-echo -e "${YELLOW}[5/6] Iniciando WAF-ML...${NC}"
+# ── Levantar contenedores desde el directorio correcto ────────────
+echo -e "${YELLOW}[5/5] Iniciando WAF-ML...${NC}"
 cd "$SCRIPT_DIR"
 docker compose down --remove-orphans 2>/dev/null || true
 docker compose up -d --build
 
 # ── Esperar que esté listo ────────────────────────────────────────
-echo -e "${YELLOW}[6/6] Esperando que el sistema esté listo...${NC}"
+echo -e "${YELLOW}   Esperando que el sistema esté listo...${NC}"
 MAX_WAIT=60
 WAITED=0
 
@@ -155,7 +151,8 @@ echo "║         ✅ WAF-ML instalado correctamente        ║"
 echo "╚══════════════════════════════════════════════════╝"
 echo -e "${NC}"
 echo -e "  🌐 WAF activo en    : ${GREEN}http://localhost:${WAF_PORT}${NC}"
-echo -e "  🔒 Backend protegido: ${GREEN}${BACKEND_URL}${NC}"
+echo -e "  🖥️  Frontend servido desde: ${GREEN}http://localhost:${WAF_PORT}${NC}"
+echo -e "  🔒 API protegida por WAF-ML ${GREEN}(LightGBM + MLP)${NC}"
 echo -e "  📊 Base de datos    : ${GREEN}PostgreSQL (waf_db)${NC}"
 echo ""
 echo -e "  ${YELLOW}Comandos útiles:${NC}"

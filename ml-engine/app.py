@@ -3,9 +3,12 @@ import joblib
 import pandas as pd
 import numpy as np
 import asyncpg, asyncio
+import io
+import threading
 from collections import Counter
 from urllib.parse import unquote
 from fastapi import FastAPI, Request, HTTPException
+from safe_unpickler import SafeUnpickler, validate_pickle_safe, SecurityError
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -36,6 +39,50 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://waf_user:waf_pass@databas
 @app.get("/health")
 async def health():
     return {"status": "ok", "model": MODEL_PATH}
+
+reload_lock = threading.Lock()
+
+@app.post("/reload_model")
+async def reload_model():
+    global lgbm_model, mlp_model, mlp_scaler, lgbm_cols, mlp_cols, lgbm_encoders
+    
+    if not os.path.exists(MODEL_PATH):
+        raise HTTPException(status_code=400, detail=f"Model file not found at {MODEL_PATH}")
+        
+    try:
+        with reload_lock:
+            with open(MODEL_PATH, "rb") as f:
+                data_bytes = f.read()
+                
+            # Perform static validation first
+            validate_pickle_safe(data_bytes)
+            
+            # Unpickle using SafeUnpickler
+            bundle = SafeUnpickler(io.BytesIO(data_bytes)).load()
+            
+            # Check expected keys
+            required_keys = ["lgbm_model", "mlp_model", "mlp_scaler", "lgbm_features", "mlp_features", "lgbm_encoders"]
+            for key in required_keys:
+                if key not in bundle:
+                    raise ValueError(f"Missing required key in model bundle: {key}")
+                    
+            # Update global variables in-memory
+            lgbm_model = bundle["lgbm_model"]
+            mlp_model = bundle["mlp_model"]
+            mlp_scaler = bundle["mlp_scaler"]
+            lgbm_cols = bundle["lgbm_features"]
+            mlp_cols = bundle["mlp_features"]
+            lgbm_encoders = bundle["lgbm_encoders"]
+            
+        print(f"✅ Model successfully reloaded from {MODEL_PATH}")
+        return {"status": "success", "message": f"Model successfully reloaded from {MODEL_PATH}"}
+        
+    except SecurityError as e:
+        print(f"❌ Security violation during model reload: {e}")
+        raise HTTPException(status_code=400, detail=f"Security violation: {str(e)}")
+    except Exception as e:
+        print(f"❌ Error reloading model: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to reload model: {str(e)}")
 
 # ══════════════════════════════════════════════════════════════════
 # 2. EXTRACCIÓN DE CARACTERÍSTICAS (Sincronizada con tu dataset)

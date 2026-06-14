@@ -123,6 +123,53 @@ AFTER INSERT ON waf_events
 FOR EACH ROW EXECUTE FUNCTION fn_update_daily_summary();
 
 -- ══════════════════════════════════════════════════════════════
+-- TABLAS DEL DASHBOARD ADMINISTRATIVO (Fase 1)
+-- ══════════════════════════════════════════════════════════════
+
+-- Tabla de usuarios con RBAC
+CREATE TABLE IF NOT EXISTS waf_users (
+    id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
+    username        VARCHAR         NOT NULL UNIQUE,
+    password_hash   VARCHAR         NOT NULL,
+    role            VARCHAR         NOT NULL,
+    created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+-- Seed de usuario administrador por defecto (Bcrypt para '***REMOVED***')
+INSERT INTO waf_users (username, password_hash, role)
+VALUES ('admin', '$2a$10$O9lZ/F6mN2hR8rN.9p.Npe/vFmF3pBwA/vM.eMByqfQj998fWe1L2', 'admin')
+ON CONFLICT (username) DO NOTHING;
+
+-- Tabla de métricas de hardware
+CREATE TABLE IF NOT EXISTS waf_hardware_metrics (
+    id              SERIAL          PRIMARY KEY,
+    container_name  VARCHAR(100)    NOT NULL,
+    cpu_usage_pct   NUMERIC(5,2)    NOT NULL,
+    ram_usage_mb    NUMERIC(9,2)    NOT NULL,
+    timestamp       TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+-- Tabla de matrices de comparación (Baselines)
+CREATE TABLE IF NOT EXISTS waf_baselines (
+    id              SERIAL          PRIMARY KEY,
+    baseline_name   VARCHAR(100)    NOT NULL UNIQUE,
+    true_positives  INTEGER         NOT NULL DEFAULT 0,
+    false_positives INTEGER         NOT NULL DEFAULT 0,
+    true_negatives  INTEGER         NOT NULL DEFAULT 0,
+    false_negatives INTEGER         NOT NULL DEFAULT 0,
+    fpr             NUMERIC(5,2)    GENERATED ALWAYS AS (ROUND(false_positives::NUMERIC / NULLIF(false_positives + true_negatives, 0) * 100, 2)) STORED,
+    updated_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+-- Seed de métricas iniciales de comparación (baselines)
+INSERT INTO waf_baselines (baseline_name, true_positives, false_positives, true_negatives, false_negatives)
+VALUES 
+    ('ModSecurity', 850, 120, 880, 150),
+    ('Coraza', 900, 80, 920, 100),
+    ('NAXSI', 780, 250, 750, 220)
+ON CONFLICT (baseline_name) DO NOTHING;
+
+-- ══════════════════════════════════════════════════════════════
 -- DATOS DE PRUEBA: Para verificar que el schema funciona
 -- ══════════════════════════════════════════════════════════════
 INSERT INTO waf_events (

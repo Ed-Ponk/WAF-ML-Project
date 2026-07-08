@@ -20,8 +20,6 @@ config/
 
 # Base de datos local
 *.sql.bak
-"@ | Out-File -FilePath D:\WAF\.gitignore -Encoding UTF8
-
 tests/
 
 openspec/
@@ -29,3 +27,9 @@ openspec/
 .atl
 
 ml-engine/log.txt
+
+# Certificados TLS autogenerados (modo dev)
+certs/
+
+# Documentación del proyecto (no parte del repo)
+docs/

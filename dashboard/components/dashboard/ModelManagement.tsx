@@ -1,7 +1,20 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { Upload, FileCheck, RefreshCw, AlertCircle, ShieldCheck, CheckCircle2 } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Upload, FileCheck, RefreshCw, AlertCircle, ShieldCheck, CheckCircle2, Loader2 } from "lucide-react";
+
+interface ModelRecord {
+  id: number;
+  name: string;
+  version: string | null;
+  accuracy: number | null;
+  f1_score: number | null;
+  training_date: string | null;
+  algorithm: string | null;
+  feature_count: number | null;
+  status: string;
+  uploaded_at: string;
+}
 
 export default function ModelManagement() {
   const [dragActive, setDragActive] = useState(false);
@@ -10,13 +23,25 @@ export default function ModelManagement() {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Hardcoded current active model details as baselines/specs
-  const [activeModel, setActiveModel] = useState({
-    name: "LightGBM + MLP Ensemble Neural Net",
-    accuracy: "99.42%",
-    f1Score: "99.21%",
-    lastTraining: "2026-06-12",
-  });
+  const [activeModel, setActiveModel] = useState<ModelRecord | null>(null);
+  const [modelLoading, setModelLoading] = useState(true);
+  const [modelError, setModelError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchActiveModel() {
+      try {
+        const res = await fetch("/dashboard/api/model/status");
+        if (!res.ok) throw new Error("Failed to fetch model status");
+        const data = await res.json();
+        setActiveModel(data.model);
+      } catch (err: any) {
+        setModelError(err.message);
+      } finally {
+        setModelLoading(false);
+      }
+    }
+    fetchActiveModel();
+  }, []);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -46,7 +71,7 @@ export default function ModelManagement() {
 
   const handleFileUpload = async (file: File) => {
     if (!file.name.endsWith(".pkl")) {
-      setError("Invalid file type: Only Python Pickle (.pkl) models are allowed.");
+      setError("Tipo de archivo inválido: Solo se permiten modelos Python Pickle (.pkl).");
       setSuccess(null);
       return;
     }
@@ -71,16 +96,15 @@ export default function ModelManagement() {
         throw new Error(data.error || "Model verification and upload failed.");
       }
 
-      setSuccess(`Model '${file.name}' verified, hot-reloaded, and activated successfully!`);
-      // Update dummy local metadata to reflect successful reload
-      setActiveModel({
-        name: `Ensemble Model: ${file.name}`,
-        accuracy: "99.58% (Calibrated)",
-        f1Score: "99.41% (Calibrated)",
-        lastTraining: new Date().toISOString().split("T")[0],
-      });
+      setSuccess(`Modelo '${file.name}' verificado, recargado en caliente y activado exitosamente.`);
+      // Refresh model status from API
+      const statusRes = await fetch("/dashboard/api/model/status");
+      if (statusRes.ok) {
+        const statusData = await statusRes.json();
+        setActiveModel(statusData.model);
+      }
     } catch (err: any) {
-      setError(err.message || "An unexpected network error occurred.");
+      setError(err.message || "Ocurrió un error de red inesperado.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -99,10 +123,10 @@ export default function ModelManagement() {
       <div>
         <h3 className="font-bold text-sm tracking-wide text-white uppercase flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          Active Model & Artificial Intelligence Management
+          Gestión del Modelo Activo e Inteligencia Artificial
         </h3>
         <p className="text-xs text-slate-500">
-          Upload and verify administrative WAF model weights with automated bytecode verification checks
+          Cargue y verifique pesos de modelos WAF administrativos con verificación automatizada de bytecode
         </p>
       </div>
 
@@ -111,34 +135,90 @@ export default function ModelManagement() {
         {/* Left Side: Active Model Details */}
         <div className="lg:col-span-2 p-6 rounded-xl border border-slate-800 bg-slate-900/35 backdrop-blur-md space-y-4">
           <h4 className="font-bold text-xs tracking-wide text-slate-400 uppercase">
-            Active Model Metadata
+            Metadatos del Modelo Activo
           </h4>
 
-          <div className="space-y-3 pt-2">
-            <div>
-              <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Algorithm Name</span>
-              <p className="text-sm font-semibold text-white mt-0.5">{activeModel.name}</p>
+          {modelLoading ? (
+            <div className="flex flex-col items-center justify-center py-8 gap-2">
+              <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
+              <p className="text-xs text-slate-500">Cargando metadatos del modelo...</p>
             </div>
-
-            <div className="grid grid-cols-2 gap-4 pt-1">
+          ) : modelError || !activeModel ? (
+            <div className="space-y-3 pt-2">
               <div>
-                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Inference Accuracy</span>
-                <p className="text-lg font-extrabold text-emerald-400 mt-0.5">{activeModel.accuracy}</p>
+                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nombre del Algoritmo</span>
+                <p className="text-sm font-semibold text-slate-400 mt-0.5">No hay modelo activo</p>
               </div>
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">F1-Score Metric</span>
-                <p className="text-lg font-extrabold text-emerald-400 mt-0.5">{activeModel.f1Score}</p>
-              </div>
-            </div>
 
-            <div className="pt-1">
-              <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Last Sync/Training Date</span>
-              <p className="text-xs font-mono text-slate-300 mt-1">{activeModel.lastTraining}</p>
+              <div className="grid grid-cols-2 gap-4 pt-1">
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Precisión de Inferencia</span>
+                  <p className="text-lg font-extrabold text-slate-500 mt-0.5">--</p>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Métrica F1-Score</span>
+                  <p className="text-lg font-extrabold text-slate-500 mt-0.5">--</p>
+                </div>
+              </div>
+
+              <div className="pt-1">
+                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Última Sincronización/Entrenamiento</span>
+                <p className="text-xs font-mono text-slate-500 mt-1">--</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-3 pt-2">
+              <div>
+                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Nombre del Algoritmo</span>
+                <p className="text-sm font-semibold text-white mt-0.5">
+                  {activeModel.algorithm || activeModel.name}
+                  {activeModel.version && (
+                    <span className="ml-2 text-[10px] text-cyan-400 font-mono">{activeModel.version}</span>
+                  )}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-1">
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Precisión de Inferencia</span>
+                  <p className="text-lg font-extrabold text-emerald-400 mt-0.5">
+                    {activeModel.accuracy != null ? `${activeModel.accuracy}%` : "--"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Métrica F1-Score</span>
+                  <p className="text-lg font-extrabold text-emerald-400 mt-0.5">
+                    {activeModel.f1_score != null ? `${activeModel.f1_score}%` : "--"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-1">
+                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Última Sincronización/Entrenamiento</span>
+                <p className="text-xs font-mono text-slate-300 mt-1">
+                  {(() => {
+                    const raw = activeModel.training_date || activeModel.uploaded_at;
+                    if (!raw) return "--";
+                    try {
+                      const d = new Date(raw);
+                      return d.toLocaleDateString("es-AR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      });
+                    } catch {
+                      return raw.split("T")[0];
+                    }
+                  })()}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="p-3 bg-cyan-500/5 border border-cyan-500/10 rounded-lg text-[11px] text-cyan-400 leading-relaxed">
-            The active model combines a LightGBM gradient booster with a multi-layer perceptron neural network in Python. Both models are executed inside the Python ML service via thread-safe unpickling.
+            El modelo activo combina un LightGBM gradient booster con una red neuronal perceptrón multicapa en Python. Ambos modelos se ejecutan dentro del servicio Python ML mediante unpickling thread-safe.
           </div>
         </div>
 
@@ -149,7 +229,7 @@ export default function ModelManagement() {
             onDragOver={handleDrag}
             onDragLeave={handleDrag}
             onDrop={handleDrop}
-            className={`relative p-8 rounded-xl border border-dashed transition-all flex flex-col items-center justify-center min-h-[220px] text-center cursor-pointer ${
+            className={`relative p-6 md:p-8 rounded-xl border border-dashed transition-all flex flex-col items-center justify-center min-h-[180px] md:min-h-[220px] text-center cursor-pointer ${
               dragActive
                 ? "border-cyan-400 bg-cyan-500/5"
                 : "border-slate-800 hover:border-slate-700 bg-slate-900/20"
@@ -169,9 +249,9 @@ export default function ModelManagement() {
               <div className="flex flex-col items-center gap-3">
                 <RefreshCw className="w-10 h-10 text-cyan-400 animate-spin" />
                 <div>
-                  <p className="text-sm font-bold text-white">Validating Model Binary...</p>
+                  <p className="text-sm font-bold text-white">Validando Binario del Modelo...</p>
                   <p className="text-xs text-slate-400 mt-1 max-w-xs">
-                    Running Pickletools bytecode inspection and security signature scans...
+                    Ejecutando inspección de bytecode Pickletools y escaneos de firma de seguridad...
                   </p>
                 </div>
               </div>
@@ -182,10 +262,10 @@ export default function ModelManagement() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-white">
-                    Drag and drop your model <code className="text-cyan-400 text-xs">.pkl</code> here
+                    Arrastre y suelte su modelo <code className="text-cyan-400 text-xs">.pkl</code> aquí
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
-                    or click to browse local files (max size 25MB)
+                    o haga clic para explorar archivos locales (tamaño máx. 25MB)
                   </p>
                 </div>
               </div>
@@ -197,7 +277,7 @@ export default function ModelManagement() {
             <div className="p-4 rounded-xl border border-red-900/30 bg-red-950/15 text-red-400 flex items-start gap-3 shadow-lg">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" />
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-red-500">Security / Verification Error</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-red-500">Error de Seguridad / Verificación</p>
                 <p className="text-xs mt-1 leading-relaxed">{error}</p>
               </div>
             </div>
@@ -207,7 +287,7 @@ export default function ModelManagement() {
             <div className="p-4 rounded-xl border border-emerald-900/30 bg-emerald-950/15 text-emerald-400 flex items-start gap-3 shadow-lg animate-fade-in">
               <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-500" />
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-500">Model Deployment Completed</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-500">Despliegue de Modelo Completado</p>
                 <p className="text-xs mt-1 leading-relaxed">{success}</p>
               </div>
             </div>

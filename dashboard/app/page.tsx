@@ -7,9 +7,9 @@ export default function EntryPage() {
 
   if (token) {
     // Has a session cookie, try to enter admin
-    redirect("/dashboard/admin");
+    redirect("/admin");
   } else {
     // No session cookie, go to login
-    redirect("/dashboard/login");
+    redirect("/login");
   }
 }

@@ -1,0 +1,2 @@
+suite,total,attack_total,clean_total,tp,tn,fp,fn,accuracy_pct,precision_pct,recall_pct,f1_pct,fpr_pct,attack_detection_rate_pct,clean_specificity_pct,fpr_wilson_95_ci_lower_pct,fpr_wilson_95_ci_center_pct,fpr_wilson_95_ci_upper_pct
+Fase 1 — Prueba Piloto,46,36,10,24,10,0,12,73.91,100.0,66.67,80.0,0.0,66.67,100.0,0.0,13.877,27.754

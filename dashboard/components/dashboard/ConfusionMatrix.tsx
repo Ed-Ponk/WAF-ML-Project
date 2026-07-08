@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Table, Eye, Edit3, Save, X, Loader2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Table, Loader2, AlertTriangle } from "lucide-react";
 
 interface Baseline {
-  id: number;
-  baseline_name: string;
+  name: string;
+  source: "benchmark" | "live";
   true_positives: number;
   false_positives: number;
   true_negatives: number;
   false_negatives: number;
-  fpr: string;
+  fpr_pct: number;
+  recall_pct: number;
+  detacc_pct: number;
 }
 
 interface RealtimeMatrix {
@@ -23,81 +25,43 @@ interface RealtimeMatrix {
   false_positive_rate_pct: string;
 }
 
+/** Número fijo de casos en el benchmark controlado (docs/benchmark-resultados.md Fase 2) */
+const BENCHMARK_N = 224;
+/** Casos de ataque en el benchmark */
+const BENCHMARK_ATTACKS = 92;
+/** Casos legítimos en el benchmark */
+const BENCHMARK_CLEAN = 132;
+
 export default function ConfusionMatrix() {
   const [baselines, setBaselines] = useState<Baseline[]>([]);
   const [realtime, setRealtime] = useState<RealtimeMatrix | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Editing state
-  const [editingBaseline, setEditingBaseline] = useState<Baseline | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  const fetchMatrixData = async () => {
-    try {
-      const res = await fetch("/dashboard/api/confusion-matrix");
-      if (!res.ok) {
-        throw new Error("Failed to load confusion matrix metrics");
-      }
-      const data = await res.json();
-      setBaselines(data.baselines || []);
-      setRealtime(data.realtime || null);
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchMatrixData = async () => {
+      try {
+        const res = await fetch("/dashboard/api/confusion-matrix");
+        if (!res.ok) {
+          throw new Error("Failed to load confusion matrix metrics");
+        }
+        const data = await res.json();
+        setBaselines(data.baselines || []);
+        setRealtime(data.realtime || null);
+      } catch (err: any) {
+        setError(err.message || "An unexpected error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchMatrixData();
   }, []);
-
-  const handleEditClick = (baseline: Baseline) => {
-    setEditingBaseline({ ...baseline });
-  };
-
-  const handleInputChange = (field: keyof Baseline, value: string) => {
-    if (!editingBaseline) return;
-    setEditingBaseline({
-      ...editingBaseline,
-      [field]: value === "" ? "" : Number(value),
-    });
-  };
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingBaseline) return;
-
-    setSubmitting(true);
-    try {
-      const res = await fetch("/dashboard/api/confusion-matrix", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editingBaseline),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to update baseline metrics");
-      }
-
-      setEditingBaseline(null);
-      await fetchMatrixData(); // Refresh metrics
-    } catch (err: any) {
-      alert(err.message || "Error submitting baseline update");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] border border-slate-800 bg-slate-900/25 rounded-2xl p-8 backdrop-blur-md">
         <Loader2 className="w-8 h-8 text-cyan-500 animate-spin mb-3" />
-        <p className="text-sm text-slate-400 font-medium">Computing confusion matrix baselines...</p>
+        <p className="text-sm text-slate-400 font-medium">Calculando líneas base de matriz de confusión...</p>
       </div>
     );
   }
@@ -106,7 +70,7 @@ export default function ConfusionMatrix() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] border border-red-900/30 bg-red-950/10 rounded-2xl p-8 backdrop-blur-md">
         <AlertTriangle className="w-8 h-8 text-red-500 mb-3" />
-        <p className="text-sm text-red-400 font-semibold mb-1">Matrix Initialization Failed</p>
+        <p className="text-sm text-red-400 font-semibold mb-1">Error al Inicializar la Matriz</p>
         <p className="text-xs text-slate-500 max-w-md text-center">{error}</p>
       </div>
     );
@@ -116,45 +80,67 @@ export default function ConfusionMatrix() {
   const wafFPR = realtime ? Number(realtime.false_positive_rate_pct || 0) : 0.05;
   const wafRecall = realtime ? Number(realtime.recall_pct || 0) : 99.8;
 
+  const liveTotal = realtime ? Number(realtime.total) : 0;
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h3 className="font-bold text-sm tracking-wide text-white uppercase flex items-center gap-2">
           <Table className="w-4 h-4 text-cyan-400" />
-          Baseline Confusion Matrix & FPR reduction
+          Matriz de Confusión y Reducción de FPR
         </h3>
         <p className="text-xs text-slate-500">
-          Academic comparison and benchmarking of our WAF-ML system vs. standard legacy rules engines
+          Comparación académica: rendimiento en producción vs. benchmark controlado contra motores de reglas heredados
         </p>
       </div>
 
-      {/* Main Grid: Comparison Table and Edit panel */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        {/* Table Container */}
-        <div className="xl:col-span-3 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/20 backdrop-blur-md shadow-lg">
+      {/* ── Table container ── */}
+      <div>
+        <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/20 backdrop-blur-md shadow-lg">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="border-b border-slate-800 bg-slate-900/50 text-slate-400 font-semibold uppercase tracking-wider">
-                <th className="p-4">Platform Name</th>
-                <th className="p-4 text-center">True Pos (TP)</th>
-                <th className="p-4 text-center">False Pos (FP)</th>
-                <th className="p-4 text-center">True Neg (TN)</th>
-                <th className="p-4 text-center">False Neg (FN)</th>
-                <th className="p-4 text-center">Recall / DR (%)</th>
-                <th className="p-4 text-center">False Pos Rate (FPR)</th>
-                <th className="p-4 text-right">Actions</th>
+                <th className="p-4">Plataforma</th>
+                <th className="p-4 text-center">TP</th>
+                <th className="p-4 text-center">FP</th>
+                <th className="p-4 text-center">TN</th>
+                <th className="p-4 text-center">FN</th>
+                <th className="p-4 text-center">Recall (%)</th>
+                <th className="p-4 text-center">FPR (%)</th>
+                <th className="p-4 text-center text-slate-500">Total (n)</th>
               </tr>
             </thead>
+
+            {/* ═══════════════════════════════════════════════
+                SECTION 1 — Producción en vivo
+                ═══════════════════════════════════════════════ */}
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {/* Highlighted WAF-ML Real-time application row */}
+              {/* Section header */}
+              <tr className="bg-slate-800/40">
+                <td
+                  colSpan={8}
+                  className="p-3 text-[10px] font-bold uppercase tracking-widest text-cyan-300"
+                >
+                  Producción en vivo — tráfico real hasta la fecha
+                </td>
+              </tr>
+
+              {/* WAF-ML Live row */}
               <tr className="bg-emerald-950/10 hover:bg-emerald-950/15 transition-colors border-l-4 border-emerald-500">
-                <td className="p-4 flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <span className="text-white font-bold">WAF-ML (Real-Time)</span>
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <div>
+                      <div className="text-white font-bold">WAF-ML (en vivo)</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">
+                        {liveTotal.toLocaleString("es-PE")} requests procesados
+                      </div>
+                    </div>
+                  </div>
                 </td>
                 <td className="p-4 text-center text-slate-200">{realtime?.true_positive ?? 1}</td>
                 <td className="p-4 text-center text-slate-200">{realtime?.false_positive ?? 0}</td>
@@ -163,20 +149,49 @@ export default function ConfusionMatrix() {
                 <td className="p-4 text-center font-bold text-emerald-400">{wafRecall.toFixed(2)}%</td>
                 <td className="p-4 text-center">
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-extrabold text-[10px]">
-                    {wafFPR.toFixed(2)}% (Optimal)
+                    {wafFPR.toFixed(2)}%
                   </span>
                 </td>
-                <td className="p-4 text-right text-slate-500 text-[10px] uppercase">
-                  Active View
+                <td className="p-4 text-center text-slate-500 font-mono text-[11px]">
+                  {liveTotal.toLocaleString("es-PE")}
                 </td>
               </tr>
 
-              {/* Baselines rows */}
+              {/* Live data caveat row */}
+              <tr className="bg-transparent">
+                <td
+                  colSpan={8}
+                  className="px-4 pb-3 pt-0 text-[10px] italic text-slate-500 leading-relaxed"
+                >
+                  ↑ Los datos en vivo reflejan el tráfico real que WAF-ML procesó en producción.
+                  Este tráfico puede no incluir la misma proporción ni variedad de ataques adversariales
+                  (8+ CWEs, {BENCHMARK_ATTACKS} ataques adversariales) que el dataset controlado del benchmark.
+                  Las métricas en vivo <strong className="text-slate-300">no son directamente comparables</strong> con los
+                  resultados del benchmark como evaluación de eficacia de detección.
+                </td>
+              </tr>
+            </tbody>
+
+            {/* ═══════════════════════════════════════════════
+                SECTION 2 — Benchmark controlado
+                ═══════════════════════════════════════════════ */}
+            <tbody className="divide-y divide-slate-800/60 font-medium">
+              {/* Section header */}
+              <tr className="bg-slate-800/40">
+                <td
+                  colSpan={8}
+                  className="p-3 text-[10px] font-bold uppercase tracking-widest text-amber-300"
+                >
+                  Benchmark controlado — {BENCHMARK_N} casos ({BENCHMARK_ATTACKS} ataques, {BENCHMARK_CLEAN} limpios)
+                </td>
+              </tr>
+
               {baselines.map((baseline) => {
-                const bFpr = Number(baseline.fpr || 0);
+                const bFpr = baseline.fpr_pct;
                 const bRecall = baseline.true_positives + baseline.false_negatives > 0
                   ? Number(((baseline.true_positives / (baseline.true_positives + baseline.false_negatives)) * 100).toFixed(2))
                   : 0;
+                const bTotal = baseline.true_positives + baseline.false_positives + baseline.true_negatives + baseline.false_negatives;
 
                 // Color classes based on severity level of FPR
                 let fprColorClass = "text-red-400 bg-red-500/10 border-red-500/20";
@@ -187,8 +202,8 @@ export default function ConfusionMatrix() {
                 }
 
                 return (
-                  <tr key={baseline.id} className="hover:bg-slate-900/30 transition-colors">
-                    <td className="p-4 text-slate-300">{baseline.baseline_name}</td>
+                  <tr key={baseline.name} className="hover:bg-slate-900/30 transition-colors">
+                    <td className="p-4 text-slate-300">{baseline.name}</td>
                     <td className="p-4 text-center text-slate-400">{baseline.true_positives}</td>
                     <td className="p-4 text-center text-slate-400">{baseline.false_positives}</td>
                     <td className="p-4 text-center text-slate-400">{baseline.true_negatives}</td>
@@ -199,15 +214,7 @@ export default function ConfusionMatrix() {
                         {bFpr.toFixed(2)}%
                       </span>
                     </td>
-                    <td className="p-4 text-right">
-                      <button
-                        onClick={() => handleEditClick(baseline)}
-                        className="p-1 px-2.5 rounded bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white transition-all flex items-center gap-1.5 ml-auto text-[10px]"
-                      >
-                        <Edit3 className="w-3 h-3" />
-                        Configure
-                      </button>
-                    </td>
+                    <td className="p-4 text-center text-slate-500 font-mono text-[11px]">{bTotal}</td>
                   </tr>
                 );
               })}
@@ -215,103 +222,14 @@ export default function ConfusionMatrix() {
           </table>
         </div>
 
-        {/* Live Config Side Panel / Modal */}
-        <div className="xl:col-span-1">
-          {editingBaseline ? (
-            <form
-              onSubmit={handleFormSubmit}
-              className="p-5 rounded-xl border border-cyan-500/20 bg-slate-900/40 backdrop-blur-md space-y-4 shadow-lg animate-fade-in text-xs"
-            >
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="font-bold text-slate-200">
-                  Configure {editingBaseline.baseline_name}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setEditingBaseline(null)}
-                  className="text-slate-500 hover:text-white transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">
-                    True Positives (TP)
-                  </label>
-                  <input
-                    type="number"
-                    value={editingBaseline.true_positives}
-                    onChange={(e) => handleInputChange("true_positives", e.target.value)}
-                    required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-white font-mono focus:border-cyan-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">
-                    False Positives (FP)
-                  </label>
-                  <input
-                    type="number"
-                    value={editingBaseline.false_positives}
-                    onChange={(e) => handleInputChange("false_positives", e.target.value)}
-                    required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-white font-mono focus:border-cyan-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">
-                    True Negatives (TN)
-                  </label>
-                  <input
-                    type="number"
-                    value={editingBaseline.true_negatives}
-                    onChange={(e) => handleInputChange("true_negatives", e.target.value)}
-                    required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-white font-mono focus:border-cyan-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">
-                    False Negatives (FN)
-                  </label>
-                  <input
-                    type="number"
-                    value={editingBaseline.false_negatives}
-                    onChange={(e) => handleInputChange("false_negatives", e.target.value)}
-                    required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-white font-mono focus:border-cyan-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-2 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-400 rounded font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all"
-              >
-                {submitting ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <>
-                    <Save className="w-3.5 h-3.5" />
-                    Save & Recalculate
-                  </>
-                )}
-              </button>
-            </form>
-          ) : (
-            <div className="p-5 rounded-xl border border-slate-800 bg-slate-900/10 backdrop-blur-md flex flex-col justify-center text-center h-full min-h-[160px]">
-              <p className="text-slate-500 text-xs italic">
-                Select a baseline system in the comparative matrix to live-configure its metric counts and recalculate its False Positive Rate (FPR) automatically.
-              </p>
-            </div>
-          )}
-        </div>
+        {/* Footnote */}
+        <p className="mt-3 text-[10px] text-slate-600 leading-relaxed">
+          <strong>Nota:</strong> El benchmark controlado evaluó los 4 WAFs con el mismo conjunto
+          de {BENCHMARK_N} casos ({BENCHMARK_ATTACKS} ataques adversariales de 8+ CWEs, {BENCHMARK_CLEAN} requests
+          legítimos). Fuente: <code className="text-slate-500">docs/benchmark-resultados.md</code> (Fase 2).
+          La fila "en vivo" muestra datos de producción sin filtro por tipo de ataque — no debe
+          interpretarse como una mejora sobre los baselines sin considerar la diferencia de muestreo.
+        </p>
       </div>
     </div>
   );

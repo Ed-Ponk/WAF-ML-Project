@@ -1,0 +1,6310 @@
+{
+  "WAF-ML": {
+    "config": {
+      "name": "WAF-ML",
+      "url": "http://localhost:80",
+      "desc": "Propio \u2014 Ensemble LGBM+MLP"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_or_classic",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_drop_table",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_union_select",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_admin_comment",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_uppercase",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_stacked",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_tautology",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_union_v2",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_boolean",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_stacked",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_blind_time",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_brands_having",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_categories_order_by",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hex_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_inline_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_url_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_tautology_alt",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_double_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_concat_function",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hql_injection",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_nested_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_cast_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_mixed_case",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_script_tag_basic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_img_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_javascript_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_iframe_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_svg_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_body_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_input_autofocus",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_uppercase_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_html_entity_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_url_encoded_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_detail_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_marquee_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_video_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_post_body_field",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_object_data",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_exfil_cookie",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_body_field",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_brands_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_categories",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_warehouses",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_no_quotes",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_lowercase_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_contact_msg",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 404
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_persons_doc",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_double_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onerror_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onmouseover",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_style_url",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_href_onclick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_single_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_close_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_data_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_formaction",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_value_break",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_backtick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_pipe_ls",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_semicolon_passwd",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_backtick_id",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_whoami",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_double_pipe",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_and_operator",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_newline_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_uname",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_powershell_style",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_env_var_leak",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_path_traversal",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_path_traversal_deep",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_exec_php_func",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_xp_cmdshell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_windows_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_null_byte_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_double_url_encode",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_double_ext",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_curl_exfil",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_wget_download",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_nc_reverse_shell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_base64_decode_exec",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_header_inject_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_redirect_raw",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cookie_inject",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_double_split_xss",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_lowercase_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_http_response_split",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_log_injection",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cache_poison",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_unicode_variant",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_partial_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      }
+    ]
+  },
+  "ModSecurity": {
+    "config": {
+      "name": "ModSecurity",
+      "url": "http://localhost:8081",
+      "desc": "OWASP CRS Paranoia Level 1"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_or_classic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_drop_table",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_union_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_admin_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_uppercase",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_stacked",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_tautology",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_union_v2",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_boolean",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_stacked",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_blind_time",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_brands_having",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_categories_order_by",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hex_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_inline_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_url_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_tautology_alt",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_double_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_concat_function",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hql_injection",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_nested_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_cast_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_mixed_case",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_script_tag_basic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_img_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_javascript_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_iframe_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_svg_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_body_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_input_autofocus",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_uppercase_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_html_entity_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_url_encoded_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_detail_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_marquee_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_video_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_post_body_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_object_data",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_exfil_cookie",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_body_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_brands_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_categories",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_warehouses",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_no_quotes",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_lowercase_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_contact_msg",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_persons_doc",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_double_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onerror_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onmouseover",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_style_url",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_href_onclick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_single_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_close_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_data_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_formaction",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_value_break",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_backtick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_pipe_ls",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_semicolon_passwd",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_backtick_id",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_whoami",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_double_pipe",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_and_operator",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_newline_inject",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_uname",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_powershell_style",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_env_var_leak",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_path_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_path_traversal_deep",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_exec_php_func",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_xp_cmdshell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_windows_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_null_byte_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_double_url_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_double_ext",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_curl_exfil",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_wget_download",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_nc_reverse_shell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_base64_decode_exec",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_header_inject_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_redirect_raw",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cookie_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_double_split_xss",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_lowercase_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_http_response_split",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_log_injection",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cache_poison",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_unicode_variant",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_partial_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      }
+    ]
+  },
+  "Coraza": {
+    "config": {
+      "name": "Coraza",
+      "url": "http://localhost:8082",
+      "desc": "Coraza WAF + Caddy + CRS"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_or_classic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_drop_table",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_union_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_admin_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_uppercase",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_stacked",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_tautology",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_union_v2",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_boolean",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_stacked",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_blind_time",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_brands_having",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_categories_order_by",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hex_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_inline_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_url_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_tautology_alt",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_double_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_concat_function",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hql_injection",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_nested_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_cast_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_mixed_case",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_script_tag_basic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_img_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_javascript_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_iframe_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_svg_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_body_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_input_autofocus",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_uppercase_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_html_entity_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_url_encoded_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_detail_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_marquee_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_video_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_post_body_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_object_data",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_exfil_cookie",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_body_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_brands_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_categories",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_warehouses",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_no_quotes",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_lowercase_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_contact_msg",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_persons_doc",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_double_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onerror_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onmouseover",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_style_url",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_href_onclick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_single_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_close_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_data_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_formaction",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_value_break",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_backtick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_pipe_ls",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_semicolon_passwd",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_backtick_id",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_whoami",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_double_pipe",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_and_operator",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_newline_inject",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_uname",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_powershell_style",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_env_var_leak",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_path_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_path_traversal_deep",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_exec_php_func",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_xp_cmdshell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_windows_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_null_byte_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_double_url_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_double_ext",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_curl_exfil",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_wget_download",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_nc_reverse_shell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_base64_decode_exec",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_header_inject_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_redirect_raw",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cookie_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_double_split_xss",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_lowercase_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_http_response_split",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_log_injection",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cache_poison",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_unicode_variant",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_partial_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      }
+    ]
+  },
+  "NAXSI": {
+    "config": {
+      "name": "NAXSI",
+      "url": "http://localhost:8083",
+      "desc": "nginx + NAXSI module"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_or_classic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_drop_table",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_union_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_admin_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_login_uppercase",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_clients_stacked",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_tautology",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_products_union_v2",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_or_1eq1",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_persons_boolean",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_stacked",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_suppliers_blind_time",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_brands_having",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "desc": "SQLi_categories_order_by",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hex_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_inline_comment",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_url_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_tautology_alt",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_double_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_concat_function",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_hql_injection",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_nested_select",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_cast_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "desc": "SQLi_ORM_mixed_case",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_script_tag_basic",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_img_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_javascript_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_iframe_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_svg_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_body_onload",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_input_autofocus",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_uppercase_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_html_entity_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_url_encoded_script",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_detail_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_marquee_event",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_video_onerror",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_post_body_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "desc": "XSS_object_data",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_exfil_cookie",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_body_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_brands_field",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_categories",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_warehouses",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_no_quotes",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_lowercase_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_contact_msg",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_persons_doc",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "desc": "XSS_basic_double_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onerror_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_onmouseover",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_style_url",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_href_onclick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_single_quote",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_close_tag",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_data_uri",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_formaction",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_value_break",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "desc": "XSS_attr_backtick",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_pipe_ls",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_semicolon_passwd",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_backtick_id",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_whoami",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_double_pipe",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_and_operator",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_newline_inject",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_subshell_uname",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_powershell_style",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "desc": "CMD_env_var_leak",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_path_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_path_traversal_deep",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_exec_php_func",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_xp_cmdshell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_windows_traversal",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_null_byte_bypass",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_double_url_encode",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_upload_double_ext",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_curl_exfil",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_wget_download",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_nc_reverse_shell",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "desc": "OS_base64_decode_exec",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_header_inject_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_redirect_raw",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cookie_inject",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_double_split_xss",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_lowercase_encoded",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_http_response_split",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_log_injection",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_cache_poison",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_unicode_variant",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "desc": "CRLF_partial_encoded",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "POST",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      },
+      {
+        "cwe": "CLEAN",
+        "desc": "GET",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 502
+      }
+    ]
+  }
+}

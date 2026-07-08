@@ -26,6 +26,8 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+# pdfkit necesita sus archivos de fuente (.afm) accesibles desde el bundle compilado
+COPY --from=builder /app/node_modules/pdfkit/js/data/ ./.next/server/chunks/data/
 
 EXPOSE 3000
 

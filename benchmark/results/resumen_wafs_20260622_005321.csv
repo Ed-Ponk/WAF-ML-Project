@@ -1,0 +1,5 @@
+waf_name,tp,tn,fp,fn,total,accuracy,precision,recall,f1_score,fpr,avg_latency_ms,p95_latency_ms,attack_accuracy,clean_accuracy
+WAF-ML,20,9,1,1,31,93.55,95.24,95.24,95.24,10.0,11.36,18.91,95.24,90.0
+ModSecurity,18,10,0,3,31,90.32,100.0,85.71,92.31,0.0,5.31,9.43,85.71,100.0
+Coraza,18,10,0,3,31,90.32,100.0,85.71,92.31,0.0,3.31,4.19,85.71,100.0
+NAXSI,20,9,1,1,31,93.55,95.24,95.24,95.24,10.0,1.52,2.54,95.24,90.0

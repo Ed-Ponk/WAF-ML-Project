@@ -23,6 +23,8 @@ services:
     build: ./ml-engine
     container_name: waf-ml-engine
     restart: unless-stopped
+    ports:
+      - "${ML_ENGINE_PORT:-8000}:${ML_ENGINE_PORT:-8000}"
     networks:
       - waf-backend
       - pyme-security-net
@@ -37,6 +39,9 @@ services:
       - THRESHOLD_BLOCK=${THRESHOLD_BLOCK}
       - THRESHOLD_LOG=${THRESHOLD_LOG}
       - WAF_DEBUG=${WAF_DEBUG}
+      # 0=fast path activado (tráfico GET limpio saltea inferencia ML)
+      # 1=desactivado (cada request pasa por el ensemble - solo para benchmark)
+      - WAF_BENCHMARK_MODE=0
     deploy:
       resources:
         limits:
@@ -147,7 +152,7 @@ services:
       - PEERS=1 # Genera 1 cliente (puedes poner 'admin,trabajador1')
       - PEERDNS=auto
     ports:
-      - "51820:51820/udp"
+      - "55555:51820/udp"
     volumes:
       - ./config/vpn:/config
     networks:

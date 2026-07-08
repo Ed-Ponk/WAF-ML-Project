@@ -21,6 +21,9 @@ MODEL_MANAGEMENT = DASHBOARD_DIR / "components" / "dashboard" / "ModelManagement
 CONFUSION_MATRIX = DASHBOARD_DIR / "components" / "dashboard" / "ConfusionMatrix.tsx"
 
 ADMIN_PAGE = DASHBOARD_DIR / "app" / "admin" / "page.tsx"
+MODELS_PAGE = DASHBOARD_DIR / "app" / "admin" / "models" / "page.tsx"
+BASELINES_PAGE = DASHBOARD_DIR / "app" / "admin" / "baselines" / "page.tsx"
+HARDWARE_PAGE = DASHBOARD_DIR / "app" / "admin" / "hardware" / "page.tsx"
 
 
 def test_telemetry_api_exists_and_queries_metrics():
@@ -116,11 +119,16 @@ def test_ui_components_exist_with_client_directive():
 
 
 def test_admin_page_renders_new_components():
-    """Verify app/admin/page.tsx renders HardwareMonitor, ModelManagement, and ConfusionMatrix."""
+    """Verify each component lives in its own page under admin/ subdirectories."""
     assert ADMIN_PAGE.exists(), "app/admin/page.tsx does not exist"
-    
-    content = ADMIN_PAGE.read_text()
-    
-    assert "HardwareMonitor" in content, "admin/page.tsx must import and render HardwareMonitor"
-    assert "ModelManagement" in content, "admin/page.tsx must import and render ModelManagement"
-    assert "ConfusionMatrix" in content, "admin/page.tsx must import and render ConfusionMatrix"
+    assert ADMIN_PAGE.read_text(), "admin/page.tsx must not be empty"
+
+    # Each section now has its own dedicated page
+    assert MODELS_PAGE.exists(), "app/admin/models/page.tsx does not exist"
+    assert "ModelManagement" in MODELS_PAGE.read_text(), "models/page.tsx must import ModelManagement"
+
+    assert BASELINES_PAGE.exists(), "app/admin/baselines/page.tsx does not exist"
+    assert "ConfusionMatrix" in BASELINES_PAGE.read_text(), "baselines/page.tsx must import ConfusionMatrix"
+
+    assert HARDWARE_PAGE.exists(), "app/admin/hardware/page.tsx does not exist"
+    assert "HardwareMonitor" in HARDWARE_PAGE.read_text(), "hardware/page.tsx must import HardwareMonitor"

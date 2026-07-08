@@ -62,7 +62,7 @@ export default function GeneralTraffic() {
         if (!res.ok) {
           throw new Error("Failed to fetch traffic telemetry stats");
         }
-        const jsonData = await res.ok ? await res.json() : null;
+        const jsonData = await res.json();
         setData(jsonData);
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred");
@@ -77,7 +77,7 @@ export default function GeneralTraffic() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] border border-slate-800 bg-slate-900/25 rounded-2xl p-8 backdrop-blur-md">
         <Loader2 className="w-8 h-8 text-cyan-500 animate-spin mb-3" />
-        <p className="text-sm text-slate-400 font-medium">Aggregating telemetry reports...</p>
+        <p className="text-sm text-slate-400 font-medium">Agregando reportes de telemetría...</p>
       </div>
     );
   }
@@ -86,8 +86,8 @@ export default function GeneralTraffic() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] border border-red-900/30 bg-red-950/10 rounded-2xl p-8 backdrop-blur-md">
         <AlertCircle className="w-8 h-8 text-red-500 mb-3" />
-        <p className="text-sm text-red-400 font-semibold mb-1">Telemetry Gathering Failed</p>
-        <p className="text-xs text-slate-500 max-w-md text-center">{error || "No data available"}</p>
+        <p className="text-sm text-red-400 font-semibold mb-1">Error al obtener telemetría</p>
+        <p className="text-xs text-slate-500 max-w-md text-center">{error || "No hay datos disponibles"}</p>
       </div>
     );
   }
@@ -96,39 +96,39 @@ export default function GeneralTraffic() {
 
   // Formatting Pie Chart Data
   const pieData = [
-    { name: "SQLi (SQL Injection)", value: totals.attacks.sqli },
+    { name: "SQLi (Inyección SQL)", value: totals.attacks.sqli },
     { name: "XSS (Cross-Site Scripting)", value: totals.attacks.xss },
-    { name: "RCE (Remote Code Execution)", value: totals.attacks.rce }
+    { name: "RCE (Ejecución Remota de Código)", value: totals.attacks.rce }
   ].filter(item => item.value > 0);
 
   // Fallback if no attack types detected
   if (pieData.length === 0) {
-    pieData.push({ name: "No Attacks Logged", value: 1 });
+    pieData.push({ name: "Sin Ataques Registrados", value: 1 });
   }
 
   const PIE_COLORS = ["#22d3ee", "#a855f7", "#ef4444"];
 
   const kpis = [
     {
-      label: "Total Requests",
+      label: "Total Solicitudes",
       value: totals.requests.toLocaleString(),
       icon: Activity,
       colorClass: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
     },
     {
-      label: "Allowed Requests",
+      label: "Solicitudes Permitidas",
       value: totals.allowed.toLocaleString(),
       icon: ShieldCheck,
       colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
     },
     {
-      label: "Blocked Requests",
+      label: "Solicitudes Bloqueadas",
       value: totals.blocked.toLocaleString(),
       icon: ShieldAlert,
       colorClass: "text-red-400 bg-red-500/10 border-red-500/20",
     },
     {
-      label: "Block Rate",
+      label: "Tasa de Bloqueo",
       value: `${totals.blockRate}%`,
       icon: Percent,
       colorClass: "text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/20",
@@ -168,13 +168,13 @@ export default function GeneralTraffic() {
         <div className="lg:col-span-2 p-6 rounded-xl border border-slate-800 bg-slate-900/35 backdrop-blur-md shadow-lg space-y-4">
           <div>
             <h3 className="font-bold text-sm tracking-wide text-white uppercase">
-              Traffic Volumes Over Time
+              Volumen de Tráfico en el Tiempo
             </h3>
             <p className="text-xs text-slate-500">
-              Chronological summary of allowed vs. blocked requests
+              Resumen cronológico de solicitudes permitidas vs. bloqueadas
             </p>
           </div>
-          <div className="h-72 w-full text-xs">
+          <div className="h-56 md:h-72 w-full text-xs">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={daily} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
@@ -196,7 +196,7 @@ export default function GeneralTraffic() {
                 />
                 <Legend verticalAlign="top" height={36} iconType="circle" />
                 <Area 
-                  name="Allowed" 
+                  name="Permitidas" 
                   type="monotone" 
                   dataKey="allowed" 
                   stroke="#10b981" 
@@ -204,7 +204,7 @@ export default function GeneralTraffic() {
                   fill="url(#colorAllowed)" 
                 />
                 <Area 
-                  name="Blocked" 
+                  name="Bloqueadas" 
                   type="monotone" 
                   dataKey="blocked" 
                   stroke="#ef4444" 
@@ -220,10 +220,10 @@ export default function GeneralTraffic() {
         <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/35 backdrop-blur-md shadow-lg flex flex-col justify-between space-y-4">
           <div>
             <h3 className="font-bold text-sm tracking-wide text-white uppercase">
-              Attack Distribution
+              Distribución de Ataques
             </h3>
             <p className="text-xs text-slate-500">
-              Aggregated threat payload classification
+              Clasificación agregada de payloads maliciosos
             </p>
           </div>
           <div className="h-56 w-full flex items-center justify-center relative text-xs">
@@ -243,21 +243,23 @@ export default function GeneralTraffic() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ backgroundColor: "#0f172a", borderColor: "#1e293b", borderRadius: "8px" }}
+                  contentStyle={{ backgroundColor: "#0f172a", borderColor: "#1e293b", borderRadius: "8px", color: "#f1f5f9" }}
+                  labelStyle={{ color: "#94a3b8", fontWeight: "bold" }}
+                  itemStyle={{ color: "#e2e8f0" }}
                 />
               </PieChart>
             </ResponsiveContainer>
             {totals.blocked === 0 && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
-                  No Threats Logged
+                  Sin Amenazas Registradas
                 </span>
               </div>
             )}
           </div>
           <div className="space-y-1 text-xs">
             {pieData.map((item, index) => (
-              <div key={idx => index} className="flex items-center justify-between">
+              <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span 
                     className="w-2.5 h-2.5 rounded-full" 

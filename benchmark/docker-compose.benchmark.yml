@@ -1,0 +1,107 @@
+# ══════════════════════════════════════════════════════════════════
+# docker-compose.benchmark.yml — WAF Benchmark Suite
+#
+# Evalúa 3 WAFs open source de referencia contra el WAF-ML propio.
+# Cada WAF corre en un puerto HOST diferente:
+#   localhost:80    → WAF-ML (propio — ya corriendo en docker-compose.yml)
+#   localhost:8081  → ModSecurity + OWASP CRS Paranoia Level 1
+#   localhost:8082  → Coraza WAF (Caddy)
+#   localhost:8083  → NAXSI (nginx + naxsi module)
+#
+# Uso:
+#   docker compose -f docker-compose.benchmark.yml up -d
+#   python benchmark_waf.py
+#   docker compose -f docker-compose.benchmark.yml down
+# ══════════════════════════════════════════════════════════════════
+
+services:
+  # ── Backend dummy (compartido por todos los WAFs) ──────────────
+  dummy-backend:
+    image: nginx:alpine
+    container_name: waf-benchmark-backend
+    volumes:
+      - ./dummy_backend.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - benchmark-net
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── ModSecurity + OWASP CRS (Paranoia Level 1) ────────────────
+  # Documentación: https://hub.docker.com/r/owasp/modsecurity-crs
+  waf-modsec:
+    image: owasp/modsecurity-crs:nginx-alpine
+    container_name: waf-modsec
+    ports:
+      - "8081:8080"
+    environment:
+      # Backend upstream
+      BACKEND: "http://dummy-backend:80"
+      BACKEND_PORT: "80"
+      # Paranoia level (1 = lowest FP, 4 = highest FP)
+      PARANOIA: "1"
+      # ModSecurity settings
+      MODSEC_RULE_ENGINE: "on"
+      MODSEC_REQ_BODY_ACCESS: "on"
+      MODSEC_REQ_BODY_LIMIT: "10485760"
+      # Anomaly scoring thresholds
+      ANOMALY_INBOUND_SCORE_THRESHOLD: "5"
+      ANOMALY_OUTBOUND_SCORE_THRESHOLD: "4"
+      # Blocking mode (no DetectionOnly)
+      BLOCKING_PARAM: "on"
+      # Enable all rules
+      MODSEC_RESPONSE_BODY_ACCESS: "off"
+      # Connection settings
+      PROXY_SSL_CERT: ""
+      PROXY_SSL_KEY: ""
+      # Server name
+      SERVERNAME: "waf-modsec.local"
+    depends_on:
+      dummy-backend:
+        condition: service_started
+    networks:
+      - benchmark-net
+    restart: unless-stopped
+
+  # ── Coraza WAF + Caddy ───────────────────────────────────────
+  # Documentación: https://github.com/corazawaf/coraza-caddy
+  waf-coraza:
+    build:
+      context: ./coraza
+      dockerfile: Dockerfile
+    container_name: waf-coraza
+    ports:
+      - "8082:80"
+    volumes:
+      - ./coraza/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      dummy-backend:
+        condition: service_started
+    networks:
+      - benchmark-net
+    restart: unless-stopped
+
+  # ── NAXSI (nginx + naxsi module) ─────────────────────────────
+  waf-naxsi:
+    build:
+      context: ./naxsi
+      dockerfile: Dockerfile
+    container_name: waf-naxsi
+    ports:
+      - "8083:80"
+    volumes:
+      - ./naxsi/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./naxsi/naxsi.rules:/etc/nginx/naxsi.rules:ro
+    depends_on:
+      dummy-backend:
+        condition: service_started
+    networks:
+      - benchmark-net
+    restart: unless-stopped
+
+networks:
+  benchmark-net:
+    driver: bridge
+    name: waf-benchmark-net

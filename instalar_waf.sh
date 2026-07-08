@@ -108,6 +108,7 @@ VITE_LINK_BACKEND=/api/v1
 
 TZ=America/Lima
 WAF_DEBUG=false
+WAF_ENV=development
 EOF
 
 # Verificar que el .env se creó correctamente antes de continuar
@@ -121,6 +122,7 @@ echo -e "${GREEN}✅ Archivo .env generado en: $SCRIPT_DIR/.env${NC}"
 # ── Crear directorios necesarios ──────────────────────────────────
 echo -e "${YELLOW}[4/5] Preparando estructura de archivos...${NC}"
 mkdir -p "$SCRIPT_DIR/config/vpn"
+mkdir -p "$SCRIPT_DIR/certs"
 echo -e "${GREEN}✅ Directorios creados${NC}"
 
 # ── Levantar contenedores desde el directorio correcto ────────────

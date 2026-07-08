@@ -77,7 +77,7 @@ SELECT
     )                                               AS recall_pct,
     ROUND(
         COUNT(*) FILTER (WHERE veredicto = 0 AND accion = 'BLOCK')::NUMERIC /
-        NULLIF(COUNT(*) FILTER (WHERE accion = 'BLOCK'), 0) * 100, 2
+        NULLIF(COUNT(*) FILTER (WHERE veredicto = 0), 0) * 100, 2
     )                                               AS false_positive_rate_pct
 FROM waf_events;
 
@@ -96,9 +96,9 @@ BEGIN
         1,
         CASE WHEN NEW.accion = 'BLOCK' THEN 1 ELSE 0 END,
         CASE WHEN NEW.accion = 'ALLOW' THEN 1 ELSE 0 END,
-        (NEW.features_json->>'sqli_keyword_flag')::INTEGER,
-        (NEW.features_json->>'xss_keyword_flag')::INTEGER,
-        (NEW.features_json->>'cmd_keyword_flag')::INTEGER,
+        COALESCE((NEW.features_json->>'has_sql')::INTEGER, 0),
+        COALESCE((NEW.features_json->>'has_xss')::INTEGER, 0),
+        COALESCE((NEW.features_json->>'has_rce')::INTEGER, 0),
         NEW.score_ml,
         NOW()
     )
@@ -110,7 +110,7 @@ BEGIN
         xss_detected   = waf_daily_summary.xss_detected   + EXCLUDED.xss_detected,
         cmd_detected   = waf_daily_summary.cmd_detected   + EXCLUDED.cmd_detected,
         avg_score_ml   = ROUND(
-                            (waf_daily_summary.avg_score_ml * waf_daily_summary.total_requests
+                            (COALESCE(waf_daily_summary.avg_score_ml, 0) * waf_daily_summary.total_requests
                              + EXCLUDED.avg_score_ml) /
                             (waf_daily_summary.total_requests + 1), 4),
         updated_at     = NOW();
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS waf_users (
 
 -- Seed de usuario administrador por defecto (Bcrypt para '***REMOVED***')
 INSERT INTO waf_users (username, password_hash, role)
-VALUES ('admin', '$2a$10$O9lZ/F6mN2hR8rN.9p.Npe/vFmF3pBwA/vM.eMByqfQj998fWe1L2', 'admin')
+VALUES ('admin', '***REMOVED***', 'admin')
 ON CONFLICT (username) DO NOTHING;
 
 -- Tabla de métricas de hardware
@@ -162,11 +162,15 @@ CREATE TABLE IF NOT EXISTS waf_baselines (
 );
 
 -- Seed de métricas iniciales de comparación (baselines)
+-- Valores reales del benchmark de 224 casos (docs/benchmark-resultados.md Fase 2)
+-- Los endpoints usan benchmark-baselines.ts (constantes centralizadas). Esta tabla
+-- se mantiene como referencia histórica para consultas directas a la DB.
 INSERT INTO waf_baselines (baseline_name, true_positives, false_positives, true_negatives, false_negatives)
 VALUES 
-    ('ModSecurity', 850, 120, 880, 150),
-    ('Coraza', 900, 80, 920, 100),
-    ('NAXSI', 780, 250, 750, 220)
+    ('WAF-ML (LGBM+MLP)', 91, 0, 132, 1),
+    ('ModSecurity + OWASP CRS', 79, 0, 132, 13),
+    ('Coraza + CRS', 79, 0, 132, 13),
+    ('NAXSI', 84, 0, 132, 8)
 ON CONFLICT (baseline_name) DO NOTHING;
 
 -- ══════════════════════════════════════════════════════════════
@@ -183,15 +187,33 @@ INSERT INTO waf_events (
     '/login', 'username=admin&password=1'' OR ''1''=''1',
     6, 42, 3.8214,
     0.9823, 1, 'BLOCK', 12.4,
-    '{"sqli_keyword_flag": 1, "special_chars": 8, "url_len": 6}'::JSONB
+    '{"has_sql": 1, "has_xss": 0, "has_rce": 0, "special_char_count": 8, "url_path_len": 6}'::JSONB
 ),
 (
     '10.0.0.5', 'GET',
     '/productos?id=3', '',
     16, 0, 2.9543,
     0.0312, 0, 'ALLOW', 3.1,
-    '{"sqli_keyword_flag": 0, "special_chars": 1, "url_len": 16}'::JSONB
+    '{"has_sql": 0, "has_xss": 0, "has_rce": 0, "special_char_count": 1, "url_path_len": 16}'::JSONB
 );
+
+-- ── Model version tracking ─────────────────────────────────────
+CREATE TABLE IF NOT EXISTS waf_models (
+    id              SERIAL PRIMARY KEY,
+    name            VARCHAR(255) NOT NULL,
+    version         VARCHAR(50),
+    accuracy        NUMERIC(5,2),
+    f1_score        NUMERIC(5,2),
+    training_date   DATE,
+    algorithm       VARCHAR(255),
+    feature_count   INTEGER,
+    status          VARCHAR(20) NOT NULL DEFAULT 'active',
+    uploaded_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed: registrar el modelo existente en ml-engine/
+INSERT INTO waf_models (name, version, algorithm, feature_count, status)
+VALUES ('WAF Ensemble MLP + LGBM', 'v1.0', 'LightGBM + MLP Neural Net', 50, 'active');
 
 -- Verificación final
 SELECT 'Schema WAF-ML creado correctamente' AS status;

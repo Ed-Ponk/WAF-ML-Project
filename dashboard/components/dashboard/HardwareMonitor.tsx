@@ -71,7 +71,7 @@ export default function HardwareMonitor() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] border border-slate-800 bg-slate-900/25 rounded-2xl p-8 backdrop-blur-md">
         <Loader2 className="w-8 h-8 text-cyan-500 animate-spin mb-3" />
-        <p className="text-sm text-slate-400 font-medium">Connecting to hardware metrics stream...</p>
+        <p className="text-sm text-slate-400 font-medium">Conectando al flujo de métricas de hardware...</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function HardwareMonitor() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] border border-red-900/30 bg-red-950/10 rounded-2xl p-8 backdrop-blur-md">
         <AlertCircle className="w-8 h-8 text-red-500 mb-3" />
-        <p className="text-sm text-red-400 font-semibold mb-1">Hardware Monitor Failed</p>
+        <p className="text-sm text-red-400 font-semibold mb-1">Error del Monitor de Hardware</p>
         <p className="text-xs text-slate-500 max-w-md text-center">{error || "No data available"}</p>
       </div>
     );
@@ -105,10 +105,10 @@ export default function HardwareMonitor() {
         <div>
           <h3 className="font-bold text-sm tracking-wide text-white uppercase flex items-center gap-2">
             <Cpu className="w-4 h-4 text-cyan-400 animate-pulse" />
-            Infrastructure & Latency Monitoring
+            Monitoreo de Infraestructura y Latencia
           </h3>
           <p className="text-xs text-slate-500">
-            Real-time server resource metrics and WAF processing latencies (5s automatic polling)
+            Métricas de recursos del servidor y latencias de procesamiento WAF (sondeo automático cada 5s)
           </p>
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function HardwareMonitor() {
             <Zap className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">WAF Latency</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Latencia WAF</span>
             <p className="text-xl font-bold text-white">{latestLatency.toFixed(2)} ms</p>
           </div>
         </div>
@@ -151,9 +151,9 @@ export default function HardwareMonitor() {
         <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/35 backdrop-blur-md shadow-lg space-y-4">
           <div>
             <h4 className="font-bold text-xs tracking-wide text-slate-400 uppercase">
-              WAF Inference Latency Trend
+              Tendencia de Latencia de Inferencia WAF
             </h4>
-            <p className="text-[11px] text-slate-500">Average engine decision latency in milliseconds</p>
+            <p className="text-[11px] text-slate-500">Latencia promedio de decisión del motor en milisegundos</p>
           </div>
           <div className="h-64 w-full text-xs">
             <ResponsiveContainer width="100%" height="100%">
@@ -174,10 +174,19 @@ export default function HardwareMonitor() {
                 <Tooltip
                   contentStyle={{ backgroundColor: "#0f172a", borderColor: "#1e293b", borderRadius: "8px" }}
                   labelStyle={{ color: "#94a3b8" }}
+                  labelFormatter={(t) => {
+                    try {
+                      return new Date(t).toLocaleDateString("es-AR", {
+                        day: "numeric", month: "short", year: "numeric",
+                        hour: "2-digit", minute: "2-digit", second: "2-digit",
+                      });
+                    } catch { return t; }
+                  }}
+                  formatter={(value: number) => [`${value.toFixed(2)} ms`, "Latencia"]}
                 />
                 <Legend verticalAlign="top" height={36} />
                 <Line
-                  name="WAF Latency"
+                  name="Latencia WAF"
                   type="monotone"
                   dataKey="latency"
                   stroke="#22d3ee"
@@ -194,9 +203,9 @@ export default function HardwareMonitor() {
         <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/35 backdrop-blur-md shadow-lg space-y-4">
           <div>
             <h4 className="font-bold text-xs tracking-wide text-slate-400 uppercase">
-              Container CPU & RAM Telemetry
+              Telemetría de CPU y RAM de Contenedores
             </h4>
-            <p className="text-[11px] text-slate-500">Live virtualization layer resource utilization</p>
+            <p className="text-[11px] text-slate-500">Utilización de recursos de la capa de virtualización en vivo</p>
           </div>
           <div className="h-64 w-full text-xs">
             <ResponsiveContainer width="100%" height="100%">
@@ -218,11 +227,23 @@ export default function HardwareMonitor() {
                 <Tooltip
                   contentStyle={{ backgroundColor: "#0f172a", borderColor: "#1e293b", borderRadius: "8px" }}
                   labelStyle={{ color: "#94a3b8" }}
+                  labelFormatter={(t) => {
+                    try {
+                      return new Date(t).toLocaleDateString("es-AR", {
+                        day: "numeric", month: "short", year: "numeric",
+                        hour: "2-digit", minute: "2-digit", second: "2-digit",
+                      });
+                    } catch { return t; }
+                  }}
+                  formatter={(value: number, name: string) => {
+                    if (name === "% CPU") return [`${value.toFixed(1)}%`, "% CPU"];
+                    return [`${value.toFixed(0)} MB`, "RAM"];
+                  }}
                 />
                 <Legend verticalAlign="top" height={36} />
                 <Line
                   yAxisId="left"
-                  name="CPU %"
+                  name="% CPU"
                   type="monotone"
                   dataKey="cpu_usage_pct"
                   stroke="#a855f7"

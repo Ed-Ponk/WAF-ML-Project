@@ -1,0 +1,5414 @@
+{
+  "WAF-ML": {
+    "config": {
+      "name": "WAF-ML",
+      "url": "http://localhost:80",
+      "desc": "Propio \u2014 Ensemble LGBM+MLP"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 404
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 401
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 422
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 422
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 422
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 422
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 422
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 422
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 422
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 404
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "FP",
+        "status": 403
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 401
+      }
+    ]
+  },
+  "ModSecurity": {
+    "config": {
+      "name": "ModSecurity",
+      "url": "http://localhost:8081",
+      "desc": "OWASP CRS Paranoia Level 1"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      }
+    ]
+  },
+  "Coraza": {
+    "config": {
+      "name": "Coraza",
+      "url": "http://localhost:8082",
+      "desc": "Coraza WAF + Caddy + CRS"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      }
+    ]
+  },
+  "NAXSI": {
+    "config": {
+      "name": "NAXSI",
+      "url": "http://localhost:8083",
+      "desc": "nginx + NAXSI module"
+    },
+    "results": [
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-89",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-564",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-79",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-80",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-83",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-77",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-78",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "TP",
+        "status": 403
+      },
+      {
+        "cwe": "CWE-93",
+        "expected": "BLOCK",
+        "result": "FN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "FP",
+        "status": 403
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "FP",
+        "status": 403
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "FP",
+        "status": 403
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      },
+      {
+        "cwe": "CLEAN",
+        "expected": "ALLOW",
+        "result": "TN",
+        "status": 200
+      }
+    ]
+  }
+}

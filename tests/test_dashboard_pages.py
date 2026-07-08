@@ -21,6 +21,7 @@ ALERTS_API = DASHBOARD_DIR / "app" / "api" / "alerts" / "route.ts"
 GENERAL_TRAFFIC = DASHBOARD_DIR / "components" / "dashboard" / "GeneralTraffic.tsx"
 ALERT_TABLE = DASHBOARD_DIR / "components" / "dashboard" / "AlertTable.tsx"
 ADMIN_PAGE = DASHBOARD_DIR / "app" / "admin" / "page.tsx"
+ALERTS_PAGE = DASHBOARD_DIR / "app" / "admin" / "alerts" / "page.tsx"
 
 
 def test_api_routes_exist_and_query_correct_tables():
@@ -96,11 +97,12 @@ def test_ui_components_exist_with_client_directive():
 
 
 def test_admin_page_renders_both_components():
-    """Verify app/admin/page.tsx exists and renders GeneralTraffic and AlertTable components."""
+    """Verify app/admin/page.tsx renders GeneralTraffic and alerts section in its own page."""
     assert ADMIN_PAGE.exists(), "app/admin/page.tsx does not exist"
-    
     content = ADMIN_PAGE.read_text()
-    
-    # Imports both components
     assert "GeneralTraffic" in content, "admin/page.tsx must import and render GeneralTraffic"
-    assert "AlertTable" in content, "admin/page.tsx must import and render AlertTable"
+
+    # Alerts section moved to its own page in admin/alerts/
+    assert ALERTS_PAGE.exists(), "app/admin/alerts/page.tsx does not exist"
+    alerts_content = ALERTS_PAGE.read_text()
+    assert "AlertTable" in alerts_content, "admin/alerts/page.tsx must import and render AlertTable"

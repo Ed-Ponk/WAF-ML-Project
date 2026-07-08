@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
+import { query } from "@/lib/db";
 
 const JWT_SECRET = process.env.JWT_SECRET || "waf-dashboard-secret-key-15-years-exp";
 
@@ -53,6 +54,13 @@ export async function POST(request: Request) {
       );
     }
 
+    // Extract optional metadata from formData
+    const name = (formData.get("name") as string) || file.name.replace(/\.pkl$/, "");
+    const version = formData.get("version") as string || null;
+    const accuracy = formData.get("accuracy") ? parseFloat(formData.get("accuracy") as string) : null;
+    const f1Score = formData.get("f1_score") ? parseFloat(formData.get("f1_score") as string) : null;
+    const trainingDate = formData.get("training_date") as string || null;
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const targetPath = "/ml-engine/waf_ensemble_final.pkl";
 
@@ -89,9 +97,50 @@ export async function POST(request: Request) {
         );
       }
 
+      // 4. Extract metadata from ml-engine reload response (preferred)
+      let reloadData: any = {};
+      try {
+        reloadData = await reloadRes.json();
+      } catch { /* ignore parse errors */ }
+
+      const algoName = reloadData?.metadata?.algorithm || "LightGBM + MLP Neural Net";
+      const accFromMl = reloadData?.metadata?.accuracy ?? null;
+      const f1FromMl  = reloadData?.metadata?.f1_score ?? null;
+      const featsFrom = reloadData?.metadata?.feature_count ?? null;
+      const trainDate = reloadData?.metadata?.training_date
+                         || trainingDate
+                         || new Date().toISOString().split("T")[0];
+
+      // 5. Persist model metadata in database
+      let insertResult: any = undefined;
+      try {
+        // Deactivate previous active models
+        await query("UPDATE waf_models SET status = 'inactive' WHERE status = 'active'");
+        // Insert new model record (use ml-engine metadata or original form values)
+        const result = await query(
+          `INSERT INTO waf_models (name, version, accuracy, f1_score, training_date, algorithm, feature_count, status)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, 'active')
+           RETURNING id, name, version, accuracy, f1_score, training_date, algorithm, status, uploaded_at`,
+          [
+            name, version,
+            accFromMl ?? accuracy,
+            f1FromMl ?? f1Score,
+            trainDate,
+            algoName,
+            featsFrom ?? 50,
+          ]
+        );
+        insertResult = result;
+        console.log("Model metadata saved:", result.rows[0]);
+      } catch (dbErr) {
+        console.error("Failed to persist model metadata:", dbErr);
+        // Don't fail the upload — metadata storage is non-critical
+      }
+
       return NextResponse.json({
         success: true,
         message: "Model reloaded successfully in-memory",
+        model: insertResult?.rows[0] || null,
       });
     } catch (fetchErr) {
       // In case ML engine is down or network issue occurs, delete the file to be safe

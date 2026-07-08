@@ -58,12 +58,15 @@ export async function POST(request: Request) {
     );
 
     // Set secure HttpOnly cookie containing the signed JWT token
+    // secure=false because Nginx terminates TLS and proxies internally as HTTP.
+    // In front of a real TLS-terminating reverse proxy, set secure=true
+    // and configure the proxy to forward X-Forwarded-Proto: https.
     response.cookies.set({
       name: "token",
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 8, // 8 hours
     });

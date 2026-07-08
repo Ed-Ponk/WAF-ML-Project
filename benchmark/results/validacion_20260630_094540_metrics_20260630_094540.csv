@@ -1,0 +1,2 @@
+suite,total,attack_total,clean_total,tp,tn,fp,fn,accuracy_pct,precision_pct,recall_pct,f1_pct,fpr_pct,attack_detection_rate_pct,clean_specificity_pct,fpr_wilson_95_ci_lower_pct,fpr_wilson_95_ci_center_pct,fpr_wilson_95_ci_upper_pct
+Fase 2 — Prueba de Validación Estadística,168,36,132,24,131,1,12,92.26,96.0,66.67,78.69,0.76,66.67,99.24,0.1339,2.1502,4.1665

@@ -1,0 +1,59 @@
+# ══════════════════════════════════════════════════════════════════
+# Caddyfile — Coraza WAF + OWASP CRS
+#
+# Reverse proxy con Coraza WAF integrado + OWASP Core Rule Set.
+# Bloquea ataques OWASP A05:2025 antes de alcanzar el backend.
+# ══════════════════════════════════════════════════════════════════
+{
+	# Desactivar TLS (solo HTTP para benchmark interno)
+	auto_https off
+
+	# Coraza debe ejecutarse primero en el pipeline
+	order coraza_waf first
+}
+
+# ── Configuración WAF ────────────────────────────────────────────
+(waf) {
+	coraza_waf {
+		# Cargar OWASP Core Rule Set embebido
+		load_owasp_crs
+
+		# Directivas de reglas (sintaxis ModSecurity/Coraza)
+		directives `
+            Include @coraza.conf-recommended
+            Include @crs-setup.conf.example
+            Include @owasp_crs/*.conf
+
+            # Modo bloqueo
+            SecRuleEngine On
+
+            # Tamaño máximo del cuerpo de la solicitud
+            SecRequestBodyLimit 10485760
+
+            # Benchmark mode: no audit logging (reduces overhead)
+            SecAuditEngine Off
+
+            # Respuesta por defecto para ataques
+            SecDefaultAction "phase:1,log,deny,status:403"
+            SecDefaultAction "phase:2,log,deny,status:403"
+        `
+	}
+
+	# Personalizar respuesta 403
+	handle_errors 403 {
+		header X-Blocked-By "coraza-waf"
+		respond "Blocked by Coraza WAF"
+	}
+}
+
+# ── Puerto de escucha ────────────────────────────────────────────
+:80 {
+	import waf
+
+	# Reverse proxy al backend dummy
+	# (Caddy pasa X-Forwarded-* automáticamente)
+	reverse_proxy dummy-backend:80 {
+		health_interval 30s
+		health_timeout 5s
+	}
+}

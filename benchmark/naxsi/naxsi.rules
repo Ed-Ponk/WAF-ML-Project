@@ -1,0 +1,54 @@
+# ══════════════════════════════════════════════════════════════════
+# NAXSI BasicRules — WAF Benchmark
+#
+# Reglas para detección de ataques OWASP A05:2025.
+# NAXSI usa puntuación: cuando un request acumula más puntos
+# que el threshold configurado, se bloquea.
+#
+# Basado en: https://github.com/nbs-system/naxsi-rules
+# ══════════════════════════════════════════════════════════════════
+
+# ── SQL Injection patterns ────────────────────────────────────────
+MainRule "str:select" "msg:SQLI select" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1001;
+MainRule "str:union" "msg:SQLI union" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1002;
+MainRule "str:sleep" "msg:SQLI sleep" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1003;
+MainRule "str:waitfor" "msg:SQLI delay" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1004;
+MainRule "str:benchmark" "msg:SQLI benchmark" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1005;
+MainRule "str:drop" "msg:SQLI drop" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1006;
+MainRule "str:insert" "msg:SQLI insert" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1007;
+MainRule "str:delete" "msg:SQLI delete" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1008;
+MainRule "str:--" "msg:SQLI comment" "mz:URL|ARGS|BODY" "s:$SQL:4" id:1009;
+MainRule "str:/*" "msg:SQLI block comment" "mz:URL|ARGS|BODY" "s:$SQL:4" id:1010;
+MainRule "str:0x" "msg:SQLI hex" "mz:URL|ARGS|BODY" "s:$SQL:6" id:1011;
+MainRule "str:\"" "msg:SQLI double quote" "mz:ARGS|BODY" "s:$SQL:4" id:1012;
+MainRule "str:'" "msg:SQLI single quote" "mz:ARGS|BODY" "s:$SQL:4" id:1013;
+MainRule "str:exec" "msg:SQLI/xp_cmdshell" "mz:URL|ARGS|BODY" "s:$SQL:8" id:1014;
+
+# ── XSS patterns ──────────────────────────────────────────────────
+MainRule "str:<script" "msg:XSS script tag" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2001;
+MainRule "str:javascript:" "msg:XSS javascript URI" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2002;
+MainRule "str:onerror" "msg:XSS onerror" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2003;
+MainRule "str:onload" "msg:XSS onload" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2004;
+MainRule "str:alert" "msg:XSS alert" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2005;
+MainRule "str:<iframe" "msg:XSS iframe" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2006;
+MainRule "str:<svg" "msg:XSS svg" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2007;
+MainRule "str:onmouseover" "msg:XSS onmouseover" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2008;
+MainRule "str:onclick" "msg:XSS onclick" "mz:URL|ARGS|BODY" "s:$XSS:8" id:2009;
+
+# ── Command Injection patterns ────────────────────────────────────
+MainRule "str:;" "msg:CMD semicolon" "mz:URL|ARGS|BODY" "s:$CMD:8" id:3001;
+MainRule "str:|" "msg:CMD pipe" "mz:URL|ARGS|BODY" "s:$CMD:8" id:3002;
+MainRule "str:`" "msg:CMD backtick" "mz:URL|ARGS|BODY" "s:$CMD:8" id:3003;
+MainRule "str:$(whoami)" "msg:CMD subshell whoami" "mz:URL|ARGS|BODY" "s:$CMD:8" id:3004;
+MainRule "str:phpinfo" "msg:CMD phpinfo" "mz:URL|ARGS|BODY" "s:$CMD:8" id:3005;
+MainRule "str:ls" "msg:CMD ls" "mz:URL|ARGS|BODY" "s:$CMD:6" id:3006;
+
+# ── Path Traversal / LFI patterns ─────────────────────────────────
+MainRule "str:../" "msg:Path traversal" "mz:URL|ARGS|BODY" "s:$TRAVERSE:8" id:4001;
+MainRule "str:..\\" "msg:Path traversal (win)" "mz:URL|ARGS|BODY" "s:$TRAVERSE:8" id:4002;
+MainRule "str:/etc/passwd" "msg:LFI passwd" "mz:URL|ARGS|BODY" "s:$TRAVERSE:8" id:4003;
+
+# ── CRLF Injection patterns ───────────────────────────────────────
+MainRule "str:%0d%0a" "msg:CRLF encoding" "mz:URL|ARGS|BODY" "s:$CRLF:8" id:5001;
+MainRule "str:\r\n" "msg:CRLF literal" "mz:URL|ARGS|BODY" "s:$CRLF:8" id:5002;
+MainRule "str:Set-Cookie" "msg:CRLF Set-Cookie" "mz:URL|ARGS|BODY" "s:$CRLF:8" id:5003;

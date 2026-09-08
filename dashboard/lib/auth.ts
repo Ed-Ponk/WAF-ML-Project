@@ -9,8 +9,8 @@
  */
 
 import jwt from "jsonwebtoken";
+import { getJwtSecret } from "./jwt";
 
-const JWT_SECRET = process.env.JWT_SECRET || "waf-dashboard-secret-key-15-years-exp";
 const ALLOWED_ROLES = ["admin", "manager", "viewer"] as const;
 
 export interface AuthUser {
@@ -70,10 +70,10 @@ export async function authenticate(
     };
   }
 
-  // 2. Verify token
+  // 2. Verify token — getJwtSecret() runs at request time (fail closed)
   let decoded: any;
   try {
-    decoded = jwt.verify(token, JWT_SECRET);
+    decoded = jwt.verify(token, getJwtSecret());
   } catch {
     return {
       ok: false,

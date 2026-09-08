@@ -1,26 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose/jwt/verify";
+import { getJwtSecret } from "./lib/jwt";
 
-// Edge-safe JWT decoder (no Node.js dependencies)
-function decodeJwt(token: string) {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    return null;
-  }
-}
+const ALLOWED_ROLES = ["admin", "manager", "viewer"];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Protect routes under /admin/*
@@ -32,17 +17,26 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    const payload = decodeJwt(token);
-    if (!payload || !payload.role) {
-      // Clear invalid token and redirect
-      const response = NextResponse.redirect(new URL("/dashboard/login", request.url));
+    let payload: any;
+    try {
+      // getJwtSecret() runs at request time; if JWT_SECRET is missing it
+      // throws here and the token is treated as invalid (fail closed).
+      const { payload: verified } = await jwtVerify(
+        token,
+        new TextEncoder().encode(getJwtSecret())
+      );
+      payload = verified;
+    } catch {
+      // Signature invalid or token expired — clear and redirect
+      const response = NextResponse.redirect(
+        new URL("/dashboard/login", request.url)
+      );
       response.cookies.delete("token");
       return response;
     }
 
-    // RBAC: Verify if role is authorized for admin dashboard
-    const allowedRoles = ["admin", "manager", "viewer"];
-    if (!allowedRoles.includes(payload.role)) {
+    // RBAC: verify role is authorized for admin dashboard
+    if (!ALLOWED_ROLES.includes(payload.role as string)) {
       const forbiddenUrl = new URL("/dashboard/login?error=unauthorized", request.url);
       return NextResponse.redirect(forbiddenUrl);
     }

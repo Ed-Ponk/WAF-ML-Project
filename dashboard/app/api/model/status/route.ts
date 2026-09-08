@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { query } from "@/lib/db";
-
-const JWT_SECRET = process.env.JWT_SECRET || "waf-dashboard-secret-key-15-years-exp";
+import { getJwtSecret } from "@/lib/jwt";
 
 export async function GET(request: Request) {
   try {
@@ -23,7 +22,7 @@ export async function GET(request: Request) {
 
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, getJwtSecret());
     } catch (err) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

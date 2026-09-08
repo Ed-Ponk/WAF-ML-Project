@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { query } from "../../../lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "waf-dashboard-secret-key-15-years-exp";
+import { getJwtSecret } from "../../../lib/jwt";
 
 export async function POST(request: Request) {
   try {
@@ -41,7 +40,7 @@ export async function POST(request: Request) {
         username: user.username,
         role: user.role,
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: "8h" }
     );
 
@@ -92,7 +91,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, getJwtSecret()) as any;
     return NextResponse.json({ authenticated: true, user: decoded }, { status: 200 });
   } catch (err) {
     return NextResponse.json({ authenticated: false }, { status: 401 });

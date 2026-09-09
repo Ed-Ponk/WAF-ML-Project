@@ -20,6 +20,8 @@ config/
 
 # Base de datos local
 *.sql.bak
+*.sql.gz
+backups/
 tests/
 
 openspec/

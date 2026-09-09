@@ -1,5 +1,5 @@
 services:
-  # ── Base de datos de telemetría ──────────────────────────────────
+  # ── Base de datos WAF (PostgreSQL, telemetría + dashboard) ─────
   database:
     image: postgres:15-alpine
     container_name: waf-db
@@ -12,6 +12,11 @@ services:
       - waf_db_data:/var/lib/postgresql/data
     networks:
       - waf-backend
+    deploy:
+      resources:
+        limits:
+          cpus: ${DB_CPU_LIMIT:-0.5}
+          memory: ${DB_MEMORY_LIMIT:-512M}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
@@ -47,6 +52,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: ${ML_CPU_LIMIT:-1.0}
           memory: ${ML_MEMORY_LIMIT}
     healthcheck:
       test:
@@ -65,6 +71,7 @@ services:
   proxy:
     build: ./nginx
     container_name: waf-proxy
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -72,15 +79,62 @@ services:
       - ./certs:/etc/nginx/certs/
       - ./nginx/403.html:/usr/share/nginx/html/403.html:ro
       - ./nginx/pyme_index.html:/usr/share/nginx/html/pyme/pyme_index.html:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/default.conf.template:/etc/nginx/conf.d/default.conf.template:ro
+      - certbot-etc:/etc/letsencrypt:ro
+      - certbot-webroot:/var/www/certbot:ro
     networks:
       - waf-frontend
       - waf-backend
       - pyme-security-net
+    # Espera que TODOS los upstreams estén saludables antes de arrancar:
+    # nginx resuelve los hostnames de proxy_pass al iniciar y muere si no
+    # existen (race de arranque clásico). service_healthy lo elimina.
     depends_on:
-      - ml-engine
+      ml-engine:
+        condition: service_healthy
+      waf-dashboard:
+        condition: service_healthy
+      pyme-react-frontend:
+        condition: service_healthy
     environment:
-      - WAF_ENV=development
+      - WAF_ENV=${WAF_ENV:-development}
+      - WAF_DOMAIN=${WAF_DOMAIN:-localhost}
+      - PYME_DOMAIN=${PYME_DOMAIN:-pyme.waf.local}
+      - ADMIN_DOMAIN=${ADMIN_DOMAIN:-admin.waf.local}
+      - CERT_PATH=${CERT_PATH:-/etc/nginx/certs/waf.crt}
+      - KEY_PATH=${KEY_PATH:-/etc/nginx/certs/waf.key}
+    deploy:
+      resources:
+        limits:
+          cpus: ${PROXY_CPU_LIMIT:-0.5}
+          memory: ${PROXY_MEMORY_LIMIT:-256M}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Certificate sidecar — Let's Encrypt (HTTP-01 + webroot compartido).
+  # En modo dev (sin ACME_PRIMARY_DOMAIN) el entrypoint hace idle y el
+  # proxy usa autofirmados de ./certs.
+  certbot:
+    image: certbot/certbot:2
+    container_name: waf-certbot
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    volumes:
+      - ./nginx/certbot-entrypoint.sh:/entrypoint.sh:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    environment:
+      - ACME_EMAIL=${ACME_EMAIL:-}
+      - ACME_PRIMARY_DOMAIN=${ACME_PRIMARY_DOMAIN:-}
+      - ACME_EXTRA_DOMAINS=${ACME_EXTRA_DOMAINS:-}
+    networks:
+      - waf-frontend
+    depends_on:
+      proxy:
+        condition: service_healthy
 
   # ── Capa 0a: PYME React Frontend ──────────────────────────────────
   pyme-react-frontend:
@@ -95,8 +149,15 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          cpus: ${PYME_FRONT_CPU_LIMIT:-0.5}
+          memory: ${PYME_FRONT_MEMORY_LIMIT:-512M}
     # NO ports exposed — traffic enters through proxy only (R1)
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5173/ >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # ── Capa 0b: PYME PHP Backend ────────────────────────────────────
   pyme-php-backend:
@@ -111,7 +172,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          cpus: ${PYME_PHP_CPU_LIMIT:-0.5}
+          memory: ${PYME_PHP_MEMORY_LIMIT:-256M}
     # NO ports directive — backend is NOT exposed to host (R1/R6)
 
   # ── Capa 0c: WAF Admin Dashboard (Next.js) ────────────────────────
@@ -138,7 +200,24 @@ services:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}
       - ML_ENGINE_URL=http://ml-engine:8000
       - JWT_SECRET=${JWT_SECRET}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DASHBOARD_CPU_LIMIT:-0.5}
+          memory: ${DASHBOARD_MEMORY_LIMIT:-768M}
+    # Liveness vía la ruta real (basePath /dashboard): /dashboard/api/health
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/dashboard/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
+  # ── VPN WireGuard — canal de administración remota ────────────────
+  # Se mantiene PUBLICADO (55555:51820/udp) a propósito: es la vía de
+  # acceso admin al VPS (SSH/panel cerrados a internet). No exponer la
+  # app por otros puertos: solo nginx 80/443 hacia internet.
   vpn:
     image: lscr.io/linuxserver/wireguard:latest
     container_name: waf-vpn
@@ -160,6 +239,11 @@ services:
     networks:
       - waf-frontend
       - waf-backend
+    deploy:
+      resources:
+        limits:
+          cpus: ${VPN_CPU_LIMIT:-0.25}
+          memory: ${VPN_MEMORY_LIMIT:-128M}
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
 
@@ -183,4 +267,5 @@ networks:
 
 volumes:
   waf_db_data:
-
+  certbot-etc:
+  certbot-webroot:

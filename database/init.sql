@@ -135,10 +135,9 @@ CREATE TABLE IF NOT EXISTS waf_users (
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()
 );
 
--- Seed de usuario administrador por defecto (Bcrypt para '***REMOVED***')
-INSERT INTO waf_users (username, password_hash, role)
-VALUES ('admin', '***REMOVED***', 'admin')
-ON CONFLICT (username) DO NOTHING;
+-- No hay seed de usuario: el administrador inicial se crea en el primer
+-- arranque con credenciales aleatorias generadas por scripts/bootstrap-admin.sh
+-- (nunca contraseñas hardcodeadas en el repo).
 
 -- Tabla de métricas de hardware
 CREATE TABLE IF NOT EXISTS waf_hardware_metrics (

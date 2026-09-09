@@ -80,18 +80,29 @@ export async function POST(request: Request) {
     try {
       const reloadRes = await fetch("http://ml-engine:8000/reload_model", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!reloadRes.ok || reloadRes.status === 400) {
-        // Reload failed (e.g. invalid signature, opcode, etc.)
-        // Delete the invalid file immediately
-        if (fs.existsSync(targetPath)) {
-          fs.unlinkSync(targetPath);
+        const errorData = await reloadRes.json().catch(() => ({}));
+        const detail = String(errorData.detail || "Model signature or opcode validation failed");
+
+        // El ÚNICO caso donde el archivo subido es dañino es el rechazo de la
+        // whitelist (400 "security whitelist"): el reload abortó antes de tocar
+        // el modelo activo, pero el archivo en sí es malicioso.
+        // Cualquier otro fallo (401 auth, 403, 500, timeout...) NO es problema
+        // del archivo: se conserva intacto para que un error transitorio no
+        // pueda borrar el modelo legítimo del volumen.
+        if (reloadRes.status === 400 && detail.toLowerCase().includes("security whitelist")) {
+          if (fs.existsSync(targetPath)) {
+            fs.unlinkSync(targetPath);
+          }
         }
 
-        const errorData = await reloadRes.json().catch(() => ({}));
         return NextResponse.json(
-          { error: errorData.detail || "Model signature or opcode validation failed" },
+          { error: detail },
           { status: 400 }
         );
       }
@@ -142,10 +153,7 @@ export async function POST(request: Request) {
         model: insertResult?.rows[0] || null,
       });
     } catch (fetchErr) {
-      // In case ML engine is down or network issue occurs, delete the file to be safe
-      if (fs.existsSync(targetPath)) {
-        fs.unlinkSync(targetPath);
-      }
+      // ml-engine inalcanzable / timeout: el archivo no es el problema — se conserva.
       return NextResponse.json(
         { error: "ML Engine reload service unreachable" },
         { status: 400 }

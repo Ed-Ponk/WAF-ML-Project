@@ -1,9 +1,11 @@
 import os
 import sys
 import io
+import json
 import pytest
 import pickle
 import joblib
+import base64, hashlib, hmac, time as _time
 from fastapi.testclient import TestClient
 
 # Add ml-engine to sys.path
@@ -12,6 +14,29 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../m
 # Set environment variable for MODEL_PATH to use a test path
 TEST_MODEL_PATH = "test_waf_ensemble_final.pkl"
 os.environ["MODEL_PATH"] = TEST_MODEL_PATH
+# JWT_SECRET de prueba (get_jwt_secret() lo lee en cada request — fail-closed)
+os.environ["JWT_SECRET"] = "test-jwt-secret"
+
+
+def _admin_jwt(role="admin", expired=False):
+    """Genera un JWT HS256 firmado con el secreto de prueba — mismas reglas
+    de encoding b64url que jsonwebtoken (dashboard), sin padding."""
+    header = base64.urlsafe_b64encode(
+        json.dumps({"alg": "HS256", "typ": "JWT"}).encode()
+    ).rstrip(b"=").decode()
+    payload = base64.urlsafe_b64encode(
+        json.dumps({
+            "userid": 1, "username": "admin", "role": role,
+            "exp": int(_time.time()) - 3600 if expired else int(_time.time()) + 3600,
+        }).encode()
+    ).rstrip(b"=").decode()
+    sig = base64.urlsafe_b64encode(
+        hmac.new("test-jwt-secret".encode(), f"{header}.{payload}".encode(), hashlib.sha256).digest()
+    ).rstrip(b"=").decode()
+    return f"{header}.{payload}.{sig}"
+
+
+AUTH = {"Authorization": f"Bearer {_admin_jwt()}"}
 
 # 1. We must prepare a valid dummy model at TEST_MODEL_PATH so that the initial import of app.py doesn't crash.
 class MockLGBM:
@@ -64,26 +89,22 @@ class MaliciousObject:
         return (os.system, ('id',))
 
 def test_safe_pickle_allowed():
-    from safe_unpickler import SafeUnpickler, validate_pickle_safe
+    from safe_unpickler import SafeUnpickler
     # Pickling a safe dictionary with standard safe types (allowed modules)
     safe_data = {"a": [1, 2, 3], "b": "hello", "c": True}
     pkl_bytes = pickle.dumps(safe_data)
-    
+
     # Should not raise any error
-    validate_pickle_safe(pkl_bytes)
     loaded = SafeUnpickler(io.BytesIO(pkl_bytes)).load()
     assert loaded == safe_data
 
 def test_unsafe_pickle_rejected():
-    from safe_unpickler import SafeUnpickler, validate_pickle_safe, SecurityError
+    from safe_unpickler import SafeUnpickler, SecurityError
     # Pickling a malicious object
     malicious = MaliciousObject()
     pkl_bytes = pickle.dumps(malicious)
-    
-    # Static check or dynamic check should raise SecurityError
-    with pytest.raises(SecurityError):
-        validate_pickle_safe(pkl_bytes)
-        
+
+    # The dynamic guard (find_class) should raise SecurityError
     with pytest.raises(SecurityError):
         SafeUnpickler(io.BytesIO(pkl_bytes)).load()
 
@@ -99,7 +120,7 @@ def test_reload_model_endpoint_invalid_pickle():
         
     # Send reload request
     try:
-        response = client.post("/reload_model")
+        response = client.post("/reload_model", headers=AUTH)
         assert response.status_code == 400
         assert "error" in response.json() or "detail" in response.json()
     finally:
@@ -125,7 +146,7 @@ def test_reload_model_endpoint_success():
         f.write(pkl_bytes)
         
     try:
-        response = client.post("/reload_model")
+        response = client.post("/reload_model", headers=AUTH)
         assert response.status_code == 200
         assert response.json()["status"] == "success"
         
@@ -141,3 +162,27 @@ def test_reload_model_endpoint_success():
         # Restore valid model
         joblib.dump(DUMMY_BUNDLE, TEST_MODEL_PATH)
         cleanup_test_file()
+
+def test_reload_model_requires_admin_jwt():
+    from app import app
+    client = TestClient(app)
+    assert client.post("/reload_model").status_code == 401
+    assert client.post("/reload_model", headers={"Authorization": "Bearer a.b.c"}).status_code == 401
+
+def test_reload_model_rejects_expired_token():
+    from app import app
+    client = TestClient(app)
+    response = client.post(
+        "/reload_model",
+        headers={"Authorization": f"Bearer {_admin_jwt(expired=True)}"},
+    )
+    assert response.status_code == 401
+
+def test_reload_model_rejects_non_admin_role():
+    from app import app
+    client = TestClient(app)
+    response = client.post(
+        "/reload_model",
+        headers={"Authorization": f"Bearer {_admin_jwt(role='viewer')}"},
+    )
+    assert response.status_code == 403

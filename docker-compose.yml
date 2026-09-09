@@ -23,8 +23,8 @@ services:
     build: ./ml-engine
     container_name: waf-ml-engine
     restart: unless-stopped
-    ports:
-      - "${ML_ENGINE_PORT:-8000}:${ML_ENGINE_PORT:-8000}"
+    expose:
+      - "${ML_ENGINE_PORT:-8000}"
     networks:
       - waf-backend
       - pyme-security-net
@@ -42,6 +42,8 @@ services:
       # 0=fast path activado (tráfico GET limpio saltea inferencia ML)
       # 1=desactivado (cada request pasa por el ensemble - solo para benchmark)
       - WAF_BENCHMARK_MODE=0
+      - JWT_SECRET=${JWT_SECRET}
+      - BACKEND_ALLOWLIST=${BACKEND_ALLOWLIST:-http://pyme-php-backend:80}
     deploy:
       resources:
         limits:

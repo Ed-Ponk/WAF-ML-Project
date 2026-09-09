@@ -1,5 +1,4 @@
-import os, sys, time, json
-import joblib
+import os, sys, time, json, base64, hashlib, hmac
 import pandas as pd
 import asyncpg, asyncio
 import threading
@@ -8,8 +7,7 @@ from urllib.parse import unquote, parse_qs
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, Response
 import httpx
-# SafeUnpickler not imported here — reload uses joblib.load() directly,
-# which handles numpy arrays and compressed formats that raw pickle can't.
+from safe_unpickler import load_bundle_safe, SecurityError
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -45,7 +43,16 @@ def _load_ensemble(path: str) -> bool:
 
     print(f"Cargando cerebro híbrido (LGBM + MLP) desde {path}...")
     import datetime as _dt
-    bundle = joblib.load(path)
+    try:
+        # Carga validada por la whitelist de safe_unpickler. Si el archivo
+        # referencia un módulo/clase fuera de la whitelist se rechaza ANTES
+        # de tocar los globals: el modelo activo queda intacto (modo degradado).
+        bundle = load_bundle_safe(path)
+    except SecurityError as e:
+        print(f"❌ CARGA RECHAZADA por whitelist: {e}")
+        print("   El modelo activo queda intacto (modo degradado).")
+        _model_loaded = False
+        return False
 
     lgbm_model  = bundle["lgbm_model"]
     mlp_model   = bundle["mlp_model"]
@@ -91,6 +98,80 @@ _load_ensemble(MODEL_PATH)
 # Nginx inyecta X-Backend; si no llega (benchmark directo), se usa DEFAULT_BACKEND
 DEFAULT_BACKEND = os.getenv("DEFAULT_BACKEND", "")
 
+# JWT_SECRET compartido con el dashboard (opción A). Fail-closed: sin la env,
+# verify_admin_jwt() rechaza siempre. Sin fallback hardcodeado.
+JWT_SECRET = os.getenv("JWT_SECRET")
+
+# Whitelist de backends del proxy (X-Backend / DEFAULT_BACKEND). CSV.
+# Valores fuera de la lista se rechazan (anti-SSRF vía header). Se normaliza
+# (strip + quitar trailing slash) para no rechazar tráfico legítimo por un "/"
+# al final (p.ej. http://pyme-php-backend:80/ vs ...:80). Scheme y host se
+# comparan tal cual: un descalce https vs http es un error de config audible
+# (403 + log), no algo que convenga silenciar.
+def _normalize_backend(url: str) -> str:
+    return url.strip().rstrip("/")
+
+BACKEND_ALLOWLIST = {
+    _normalize_backend(url)
+    for url in os.getenv("BACKEND_ALLOWLIST", "").split(",")
+    if url.strip()
+}
+
+
+def _get_jwt_secret() -> str:
+    """Lee JWT_SECRET de la env (mismo patrón lazy/fail-closed que el dashboard)."""
+    secret = os.getenv("JWT_SECRET")
+    if not secret:
+        raise RuntimeError("JWT_SECRET no está definido")
+    return secret
+
+
+def _b64url_decode(part: str) -> bytes:
+    pad = "=" * (-len(part) % 4)
+    return base64.urlsafe_b64decode(part + pad)
+
+
+def verify_admin_jwt(token: str) -> str:
+    """Verifica un JWT (firma HS256 + exp + role admin) contra JWT_SECRET.
+
+    Retorna "ok" o el motivo de rechazo (missing_secret / malformed /
+    bad_signature / expired / forbidden_role). Sin librerías de terceros.
+    """
+    try:
+        secret = _get_jwt_secret()
+    except RuntimeError:
+        print("❌ JWT_SECRET no configurado — reload rechazado (fail-closed)")
+        return "missing_secret"
+
+    try:
+        header_b64, payload_b64, sig_b64 = token.split(".")
+    except ValueError:
+        return "malformed"
+
+    try:
+        header = json.loads(_b64url_decode(header_b64))
+        if header.get("alg") != "HS256":
+            return "bad_signature"
+
+        expected = hmac.new(
+            secret.encode("utf-8"),
+            f"{header_b64}.{payload_b64}".encode("utf-8"),
+            hashlib.sha256,
+        ).digest()
+        received = _b64url_decode(sig_b64)
+        if not hmac.compare_digest(expected, received):
+            return "bad_signature"
+
+        payload = json.loads(_b64url_decode(payload_b64))
+        exp = payload.get("exp")
+        if not exp or time.time() >= exp:
+            return "expired"
+        if payload.get("role") != "admin":
+            return "forbidden_role"
+        return "ok"
+    except Exception:
+        return "malformed"
+
 app = FastAPI(title="WAF-ML Hybrid Engine", version="2.0")
 db_pool = None
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://waf_user:waf_pass@database:5432/waf_db")
@@ -108,15 +189,27 @@ async def health():
 reload_lock = threading.Lock()
 
 @app.post("/reload_model")
-async def reload_model():
+async def reload_model(request: Request):
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized: missing Bearer token")
+
+    reason = verify_admin_jwt(auth[len("Bearer "):].strip())
+    if reason == "forbidden_role":
+        raise HTTPException(status_code=403, detail="Forbidden: Admin role required")
+    if reason != "ok":
+        raise HTTPException(status_code=401, detail=f"Unauthorized: {reason}")
+
     if not os.path.exists(MODEL_PATH):
         raise HTTPException(status_code=400, detail=f"Model file not found at {MODEL_PATH}")
         
     try:
         with reload_lock:
-            # Use joblib.load() — handles numpy arrays, compressed formats,
-            # and pickle protocol extensions that raw pickle.Unpickler can't.
-            bundle = joblib.load(MODEL_PATH)
+            # Carga con el unpickler restringido (SafeNumpyUnpickler sobre el
+            # formato numpy_pickle de joblib). Si el bundle referencia un
+            # módulo/clase fuera de la whitelist, SecurityError aborta el
+            # reload ANTES de actualizar los globals del modelo activo.
+            bundle = load_bundle_safe(MODEL_PATH)
             
             # Validate expected keys
             required_keys = ["lgbm_model", "mlp_model", "mlp_scaler", "lgbm_features", "mlp_features", "lgbm_encoders"]
@@ -142,6 +235,10 @@ async def reload_model():
             },
         }
         
+    except SecurityError as e:
+        print(f"❌ Reload rechazado por whitelist: {e}")
+        raise HTTPException(status_code=400, detail=f"Model rejected by security whitelist: {e}")
+
     except Exception as e:
         err_msg = str(e)
         print(f"❌ Error reloading model: {err_msg}")
@@ -424,7 +521,18 @@ async def waf_core(request: Request, path_name: str):
 
     # ── Proxy al backend ──────────────────────────────────────────
     # Si es ALLOW o LOG, reenviar la request al backend real
-    backend_url = request.headers.get("X-Backend", DEFAULT_BACKEND)
+    backend_url = _normalize_backend(request.headers.get("X-Backend", DEFAULT_BACKEND))
+
+    # Whitelist de backends: cualquier X-Backend/DEFAULT_BACKEND fuera de la
+    # lista se rechaza sin siquiera intentar el reenvío (anti-SSRF vía header).
+    if backend_url and backend_url not in BACKEND_ALLOWLIST:
+        print(f"⚠️ X-Backend rechazado por allowlist: {backend_url}")
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "Forbidden backend"},
+            headers={"X-WAF-Action": action, "X-WAF-Score": str(round(float(score), 4))},
+        )
+
     if backend_url:
         try:
             # Reconstruir la URL completa del backend
@@ -514,8 +622,8 @@ async def save_to_db(client_ip: str, user_agent: str, method: str, url_inspect: 
                         ip_origen, user_agent, metodo_http, url, payload,
                         url_length, payload_length, special_char_count, shannon_entropy,
                         score_ml, veredicto, accion, tiempo_inferencia_ms,
-                        features_json, waf_version
-                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+                        features_json, cwe_family, waf_version
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
                 ''', 
                 client_ip, 
                 user_agent,
@@ -531,6 +639,7 @@ async def save_to_db(client_ip: str, user_agent: str, method: str, url_inspect: 
                 action, 
                 latency, 
                 json.dumps(f_dict),
+                f_dict.get('cwe_family'),  # cwe_family desde features (None = legítimo)
                 MODEL_VERSION)
         except Exception as db_e:
             print(f"⚠️ Error al guardar en DB: {db_e}")

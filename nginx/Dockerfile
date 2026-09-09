@@ -13,14 +13,21 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 # OpenSSL NO viene incluido en nginx:alpine (solo las librerías compartidas).
 # Instalamos explícitamente el binario openssl para la generación zero-touch de certificados.
-RUN apk add --no-cache openssl
+# gettext → envsubst (renderiza default.conf.template con DOMAIN/certs).
+# dcron → reload diario del nginx para refrescar certificados Let's Encrypt renovados.
+RUN apk add --no-cache openssl gettext dcron
 
 # Script de generación zero-touch de certificados TLS
 COPY generate_certs.sh /generate_certs.sh
 RUN chmod +x /generate_certs.sh
 
-# Configuración personalizada de Nginx
-COPY default.conf /etc/nginx/conf.d/default.conf
+# Reload periódico (certificados renovados por el sidecar certbot).
+# HUP = recarga limpia de config; seguro aunque no haya cambios.
+RUN echo "0 3 * * * [ -f /var/run/nginx.pid ] && kill -HUP \$(cat /var/run/nginx.pid) > /dev/null 2>&1" \
+    > /etc/crontabs/root
+
+# Configuración personalizada de Nginx (template renderizado por generate_certs.sh)
+COPY default.conf.template /etc/nginx/conf.d/default.conf.template
 
 # Páginas de error
 COPY 403.html /usr/share/nginx/html/403.html

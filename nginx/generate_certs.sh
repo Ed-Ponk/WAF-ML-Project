@@ -4,15 +4,39 @@
 #                      para el proxy reverso Nginx (WAF-ML).
 #
 # Comportamiento:
+#   - Renderiza default.conf.template → default.conf (envsubst).
 #   - Verifica si /etc/nginx/certs/waf.{crt,key} existen.
 #   - Si faltan, genera un certificado autofirmado vía OpenSSL
 #     en modo NO INTERACTIVO (-subj), sin intervención humana.
 #   - Si OpenSSL falla, loguea el error y permite degradación
 #     segura (el contenedor reintentará al reiniciar).
+#   - Arranca crond (reload periódico tras renovación de certs).
 #   - Finaliza con exec para delegar al comando original de Nginx.
 # ══════════════════════════════════════════════════════════════════
 
 set -e
+
+# ── Valores por defecto para el template (dev = autofirmado) ─────
+# export obligatorio: envsubst es un proceso hijo y solo ve variables
+# de entorno exportadas (un default local sin export no llega).
+: "${WAF_DOMAIN:=localhost}"
+: "${PYME_DOMAIN:=pyme.waf.local}"
+: "${ADMIN_DOMAIN:=admin.waf.local}"
+: "${CERT_PATH:=/etc/nginx/certs/waf.crt}"
+: "${KEY_PATH:=/etc/nginx/certs/waf.key}"
+export WAF_DOMAIN PYME_DOMAIN ADMIN_DOMAIN CERT_PATH KEY_PATH
+
+# ── Renderizar la config de Nginx (solo estas vars; las $punteras
+#    de nginx como $host/$scheme se preservan) ────────────────────
+TEMPLATE_FILE="/etc/nginx/conf.d/default.conf.template"
+CONF_FILE="/etc/nginx/conf.d/default.conf"
+if [ -f "$TEMPLATE_FILE" ]; then
+    echo "[WAF] 📄 Renderizando ${TEMPLATE_FILE} → ${CONF_FILE}"
+    envsubst '${WAF_DOMAIN} ${PYME_DOMAIN} ${ADMIN_DOMAIN} ${CERT_PATH} ${KEY_PATH}' \
+        < "$TEMPLATE_FILE" > "$CONF_FILE"
+else
+    echo "[WAF] ⚠️  No se encontró ${TEMPLATE_FILE}; se usa ${CONF_FILE} si existe." >&2
+fi
 
 CERTS_DIR="${CERTS_DIR:-/etc/nginx/certs}"
 CERT_FILE="${CERTS_DIR}/waf.crt"
@@ -65,6 +89,11 @@ if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
     # No salimos con error para evitar crash loop; Nginx arrancará en
     # modo degradado (solo HTTP). La próxima vez que el contenedor
     # se reinicie, reintentará la generación.
+fi
+
+# ── Arrancar cron en segundo plano (reload tras renovación ACME) ─
+if command -v crond >/dev/null 2>&1; then
+    crond -b -l 2 2>/dev/null || true
 fi
 
 # ── Delegar a Nginx (o al comando que sea) ─────────────────────

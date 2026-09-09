@@ -1,31 +1,25 @@
 # ══════════════════════════════════════════════════════════════════
-# default.conf — Proxy Reverso Nginx con terminación TLS
+# default.conf.template — Proxy Reverso Nginx con terminación TLS
 #
 # Capa 1 del WAF-ML Híbrido.
-#   - Puerto 443:  HTTPS con certificado autofirmado (dev)
-#   - Puerto 80:   HTTP plano (útil para healthchecks internos)
+#   - Puerto 443:  HTTPS (autofirmado en dev, Let's Encrypt en prod)
+#   - Puerto 80:   HTTP (healthchecks, acme-challenge, redirección)
+#
+# TEMPLATE: lo renderiza generate_certs.sh con envsubst al arrancar.
+# Variables (NO usar otras: $host/$scheme/etc. son de nginx):
+#   WAF_DOMAIN / PYME_DOMAIN / ADMIN_DOMAIN — server_name
+#   CERT_PATH / KEY_PATH                    — rutas de certificados
+#   (dev: /etc/nginx/certs/waf.*  ·  prod: /etc/letsencrypt/live/...)
 #
 # Flujo TLS (MitM legítimo):
 #   Cliente → HTTPS :443 → Nginx descifra → HTTP plano → Backend
-# ══════════════════════════════════════════════════════════════════
-
-# ══════════════════════════════════════════════════════════════════
-# WAF-ML PROXY — Ruteo por subdominios y por ruta
-#
-# Acceso vía subdominio (recomendado):
-#   http://admin.waf.local        → WAF Admin Dashboard (Next.js)
-#   http://pyme.waf.local         → PYME Frontend SPA
-#
-# Acceso vía ruta (compatibilidad):
-#   http://localhost/dashboard    → WAF Admin Dashboard
-#   http://localhost/             → PYME Frontend
 # ══════════════════════════════════════════════════════════════════
 
 # ── HTTP: PYME Frontend + API legado ────────────────────────────
 server {
     listen 80;
     listen [::]:80;
-    server_name localhost pyme.waf.local;
+    server_name ${WAF_DOMAIN} ${PYME_DOMAIN};
 
     # ── Timeouts adaptativos ──────────────────────────────────
     proxy_connect_timeout 10s;
@@ -34,6 +28,11 @@ server {
 
     # ── Error catchment (server-level) ────────────────────────
     error_page 500 502 503 504 =200 /pyme/pyme_index.html;
+
+    # ── Let's Encrypt HTTP-01 (webroot compartido con certbot) ─
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
 
     # ══════════════════════════════════════════════════════════
     # STATIC ASSETS — Frontend SPA (NO ML check)
@@ -115,12 +114,17 @@ server {
 server {
     listen 80;
     listen [::]:80;
-    server_name admin.waf.local;
+    server_name ${ADMIN_DOMAIN};
 
     # ── Timeouts ──────────────────────────────────────────────
     proxy_connect_timeout 10s;
     proxy_read_timeout    30s;
     proxy_send_timeout    30s;
+
+    # ── Let's Encrypt HTTP-01 (webroot compartido con certbot) ─
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
 
     location / {
         auth_request off;
@@ -155,13 +159,13 @@ server {
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
-    server_name localhost pyme.waf.local;
+    server_name ${WAF_DOMAIN} ${PYME_DOMAIN};
 
-    # ── Certificados TLS autogenerados ─────────────────────────
-    ssl_certificate     /etc/nginx/certs/waf.crt;
-    ssl_certificate_key /etc/nginx/certs/waf.key;
+    # ── Certificados TLS ──────────────────────────────────────
+    ssl_certificate     ${CERT_PATH};
+    ssl_certificate_key ${KEY_PATH};
 
-    # ── Configuración SSL recomendada para desarrollo ──────────
+    # ── Configuración SSL recomendada ──────────────────────────
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
     ssl_prefer_server_ciphers off;
@@ -255,11 +259,11 @@ server {
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
-    server_name admin.waf.local;
+    server_name ${ADMIN_DOMAIN};
 
-    # Mismos certificados autofirmados (localhost/wildcard interno)
-    ssl_certificate     /etc/nginx/certs/waf.crt;
-    ssl_certificate_key /etc/nginx/certs/waf.key;
+    # Certificados compartidos (mismo origen que WAF_DOMAIN)
+    ssl_certificate     ${CERT_PATH};
+    ssl_certificate_key ${KEY_PATH};
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;

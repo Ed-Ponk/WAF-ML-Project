@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { query } from "../../../lib/db";
+import { authenticate } from "@/lib/auth";
 
 export async function GET(request: Request) {
+  const auth = await authenticate(request);
+  if (!auth.ok) return auth.response;
   try {
     // 1. Query pre-aggregated daily summaries
     const result = await query(

@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { query } from "../../../lib/db";
 import { WAF_ML_BENCHMARK, BASELINES, BENCHMARK_DATE } from "../../../lib/benchmark-baselines";
+import { authenticate } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await authenticate(request);
+  if (!auth.ok) return auth.response;
   try {
     // WAF-ML en vivo desde vw_confusion_matrix (datos reales de producción)
     const realtimeRes = await query("SELECT * FROM vw_confusion_matrix");

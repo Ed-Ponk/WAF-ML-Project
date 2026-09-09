@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { query } from "../../../lib/db";
+import { authenticate } from "@/lib/auth";
 
 export async function GET(request: Request) {
+  const auth = await authenticate(request);
+  if (!auth.ok) return auth.response;
   try {
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
@@ -53,7 +56,7 @@ export async function GET(request: Request) {
       params.push(dateTo);
     }
 
-    const whereClause = conditions.join(" AND ");
+    const whereClause = conditions.length ? conditions.join(" AND ") : "1=1";
 
     // Retrieve total count with same filters
     const countRes = await query(

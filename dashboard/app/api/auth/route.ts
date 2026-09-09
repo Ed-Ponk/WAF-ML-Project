@@ -163,15 +163,15 @@ export async function POST(request: Request) {
       { status: 200 }
     );
 
-    // Set secure HttpOnly cookie containing the signed JWT token
-    // secure=false because Nginx terminates TLS and proxies internally as HTTP.
-    // In front of a real TLS-terminating reverse proxy, set secure=true
-    // and configure the proxy to forward X-Forwarded-Proto: https.
+    // Set secure HttpOnly cookie containing the signed JWT token.
+    // The Secure flag is env-driven (COOKIE_SECURE): Nginx terminates TLS and
+    // proxies internally as HTTP, so dev over http://localhost needs false.
+    // Behind a real TLS origin, set COOKIE_SECURE=true in the prod .env.
     response.cookies.set({
       name: "token",
       value: token,
       httpOnly: true,
-      secure: false,
+      secure: process.env.COOKIE_SECURE === "true",
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 8, // 8 hours
@@ -228,6 +228,8 @@ export async function DELETE(request: Request) {
     name: "token",
     value: "",
     httpOnly: true,
+    secure: process.env.COOKIE_SECURE === "true",
+    sameSite: "lax",
     expires: new Date(0),
     path: "/",
   });

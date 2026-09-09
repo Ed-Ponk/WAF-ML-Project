@@ -3,6 +3,7 @@ import { query } from "../../../lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { getJwtSecret } from "../../../lib/jwt";
+import { getClientIp, logAuditEvent } from "@/lib/audit";
 
 // ─────────────────────────────────────────────────────────────
 // In-memory rate limiter for login attempts (brute-force mitigation)
@@ -28,22 +29,6 @@ interface LoginAttemptEntry {
 
 const loginAttempts = new Map<string, LoginAttemptEntry>();
 let lastSweep = Date.now();
-
-function getClientIp(request: Request): string {
-  // X-Real-IP is set unconditionally by nginx to $remote_addr and is the
-  // authoritative source. X-Forwarded-For can carry attacker-supplied values,
-  // so it is only a fallback (last entry) when X-Real-IP is absent.
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp && realIp.trim()) {
-    return realIp.trim();
-  }
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded && forwarded.trim()) {
-    const parts = forwarded.split(",");
-    return parts[parts.length - 1].trim();
-  }
-  return "unknown";
-}
 
 function isLoginLocked(key: string, now: number): boolean {
   const entry = loginAttempts.get(key);
@@ -98,6 +83,11 @@ export async function POST(request: Request) {
     const now = Date.now();
 
     if (isLoginLocked(rateKey, now)) {
+      logAuditEvent("login", "blocked", {
+        user: { username: username ?? null },
+        ip,
+        details: { reason: "rate_limited" },
+      });
       return NextResponse.json(
         { error: "Too many failed login attempts. Please try again later." },
         { status: 429 }
@@ -116,6 +106,11 @@ export async function POST(request: Request) {
       // Count as failure too, so username enumeration is also rate-limited.
       const locked = recordFailedLogin(rateKey, Date.now());
       logFailedLogin(ip, username);
+      logAuditEvent("login", "failure", {
+        user: { username: username ?? null },
+        ip,
+        details: { reason: "invalid_credentials" },
+      });
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: locked ? 429 : 401 }
@@ -127,6 +122,11 @@ export async function POST(request: Request) {
     if (!passwordMatch) {
       const locked = recordFailedLogin(rateKey, Date.now());
       logFailedLogin(ip, username);
+      logAuditEvent("login", "failure", {
+        user: { username: username ?? null },
+        ip,
+        details: { reason: "invalid_credentials" },
+      });
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: locked ? 429 : 401 }
@@ -135,6 +135,10 @@ export async function POST(request: Request) {
 
     // Success: clear failed-attempt history for this combo
     loginAttempts.delete(rateKey);
+    logAuditEvent("login", "success", {
+      user: { userid: user.id, username: user.username },
+      ip,
+    });
 
     // Sign JWT token with: userid, username, role
     const token = jwt.sign(
@@ -202,7 +206,23 @@ export async function GET(request: Request) {
 }
 
 // Support DELETE for logout
-export async function DELETE() {
+export async function DELETE(request: Request) {
+  // Resolve the acting user best-effort from the session cookie (may be null
+  // when the token is missing or already expired — logout still succeeds).
+  let actor: { userid?: string; username?: string } | null = null;
+  const cookieHeader = request.headers.get("cookie") || "";
+  const tokenMatch = cookieHeader.match(/token=([^;]+)/);
+  if (tokenMatch) {
+    try {
+      const decoded = jwt.verify(tokenMatch[1], getJwtSecret()) as any;
+      if (decoded && (decoded.userid || decoded.username)) {
+        actor = { userid: decoded.userid, username: decoded.username };
+      }
+    } catch {
+      // best-effort only
+    }
+  }
+
   const response = NextResponse.json({ success: true });
   response.cookies.set({
     name: "token",
@@ -211,5 +231,8 @@ export async function DELETE() {
     expires: new Date(0),
     path: "/",
   });
+
+  logAuditEvent("logout", "success", { user: actor, ip: getClientIp(request) });
+
   return response;
 }

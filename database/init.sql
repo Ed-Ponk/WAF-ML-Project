@@ -218,3 +218,24 @@ VALUES ('WAF Ensemble MLP + LGBM', 'v1.0', 'LightGBM + MLP Neural Net', 50, 'act
 -- Verificación final
 SELECT 'Schema WAF-ML creado correctamente' AS status;
 SELECT * FROM vw_confusion_matrix;
+-- ══════════════════════════════════════════════════════════════
+-- AUDITORÍA DE ACCIONES ADMINISTRATIVAS
+-- ══════════════════════════════════════════════════════════════
+-- Registra quién hizo qué y cuándo (login, logout, model.upload).
+-- NOTA (operativo): este archivo corre SOLO cuando el volumen de
+-- Postgres está vacío. Para aplicar a una DB existente, ejecutar el
+-- mismo SQL vía: docker compose exec database psql -U <user> -d <db>
+CREATE TABLE IF NOT EXISTS waf_audit_log (
+    id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         UUID,                 -- actor (JWT). NULL: login fallido / sin sesión
+    username        VARCHAR,              -- actor o username intentado (login fallido)
+    action          VARCHAR(50) NOT NULL, -- login | logout | model.upload
+    result          VARCHAR(10) NOT NULL CHECK (result IN ('success','failure','blocked')),
+    ip_address      INET,                 -- IP del cliente (X-Real-IP de nginx)
+    details         JSONB       NOT NULL DEFAULT '{}'::JSONB,  -- contexto redactado por acción
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_created_at ON waf_audit_log (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_action     ON waf_audit_log (action);
+CREATE INDEX IF NOT EXISTS idx_audit_user_id    ON waf_audit_log (user_id);

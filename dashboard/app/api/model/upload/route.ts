@@ -5,9 +5,12 @@ import fs from "fs";
 import path from "path";
 import { query } from "@/lib/db";
 import { getJwtSecret } from "@/lib/jwt";
+import { getClientIp, logAuditEvent } from "@/lib/audit";
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+
     // 1. Authenticate and authorize admin role
     const cookieStore = cookies();
     let token = cookieStore.get("token")?.value;
@@ -19,6 +22,7 @@ export async function POST(request: Request) {
     }
 
     if (!token) {
+      logAuditEvent("model.upload", "blocked", { ip, details: { reason: "unauthorized" } });
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -26,10 +30,16 @@ export async function POST(request: Request) {
     try {
       decoded = jwt.verify(token, getJwtSecret());
     } catch (err) {
+      logAuditEvent("model.upload", "blocked", { ip, details: { reason: "invalid_token" } });
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     if (!decoded || decoded.role !== "admin") {
+      logAuditEvent("model.upload", "blocked", {
+        user: decoded ? { userid: decoded.userid, username: decoded.username } : null,
+        ip,
+        details: { reason: "admin_required" },
+      });
       return NextResponse.json(
         { error: "Forbidden: Admin role required" },
         { status: 403 }
@@ -99,6 +109,17 @@ export async function POST(request: Request) {
           if (fs.existsSync(targetPath)) {
             fs.unlinkSync(targetPath);
           }
+          logAuditEvent("model.upload", "blocked", {
+            user: { userid: decoded.userid, username: decoded.username },
+            ip,
+            details: { reason: "whitelist_rejected", detail, filename: file.name, file_size: buffer.length },
+          });
+        } else {
+          logAuditEvent("model.upload", "failure", {
+            user: { userid: decoded.userid, username: decoded.username },
+            ip,
+            details: { reason: "reload_rejected", detail, filename: file.name },
+          });
         }
 
         return NextResponse.json(
@@ -147,12 +168,32 @@ export async function POST(request: Request) {
         // Don't fail the upload — metadata storage is non-critical
       }
 
+      logAuditEvent("model.upload", "success", {
+        user: { userid: decoded.userid, username: decoded.username },
+        ip,
+        details: {
+          model_name: name,
+          version: version ?? null,
+          accuracy: accFromMl ?? accuracy,
+          f1_score: f1FromMl ?? f1Score,
+          algorithm: algoName,
+          file_size: buffer.length,
+          model_db_id: insertResult?.rows[0]?.id ?? null,
+          metadata_persisted: insertResult !== undefined,
+        },
+      });
+
       return NextResponse.json({
         success: true,
         message: "Model reloaded successfully in-memory",
         model: insertResult?.rows[0] || null,
       });
     } catch (fetchErr) {
+      logAuditEvent("model.upload", "failure", {
+        user: { userid: decoded.userid, username: decoded.username },
+        ip,
+        details: { reason: "ml_engine_unreachable", filename: file.name },
+      });
       // ml-engine inalcanzable / timeout: el archivo no es el problema — se conserva.
       return NextResponse.json(
         { error: "ML Engine reload service unreachable" },
@@ -161,6 +202,10 @@ export async function POST(request: Request) {
     }
   } catch (error: any) {
     console.error("Model Upload API Error:", error);
+    logAuditEvent("model.upload", "failure", {
+      ip,
+      details: { reason: "internal_error" },
+    });
     return NextResponse.json(
       { error: error.message || "Internal Server Error" },
       { status: 500 }

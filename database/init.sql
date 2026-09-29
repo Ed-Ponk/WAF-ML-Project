@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS waf_events (
     payload_length      INTEGER,
     special_char_count  INTEGER,
     shannon_entropy     NUMERIC(8,6),
-    features_json       JSONB, -- Guarda las 17 dimensiones exactas
+    features_json       JSONB, -- Guarda las 17+ dimensiones exactas
+    cwe_family          VARCHAR(20), -- Familia de ataque (sql, xss, rce, crlf...). null = legítimo/sin clasificar
 
     -- Resultado del motor ML
     score_ml        NUMERIC(6,4) NOT NULL CHECK (score_ml BETWEEN 0 AND 1),
@@ -48,6 +49,10 @@ CREATE TABLE IF NOT EXISTS waf_daily_summary (
     sqli_detected   INTEGER     DEFAULT 0,
     xss_detected    INTEGER     DEFAULT 0,
     cmd_detected    INTEGER     DEFAULT 0,
+    cwe_sqli        INTEGER     DEFAULT 0,
+    cwe_xss         INTEGER     DEFAULT 0,
+    cwe_rce         INTEGER     DEFAULT 0,
+    cwe_crlf        INTEGER     DEFAULT 0,
     avg_score_ml    NUMERIC(6,4),
     updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
@@ -89,7 +94,9 @@ RETURNS TRIGGER AS $$
 BEGIN
     INSERT INTO waf_daily_summary (
         fecha_dia, total_requests, total_blocked, total_allowed,
-        sqli_detected, xss_detected, cmd_detected, avg_score_ml, updated_at
+        sqli_detected, xss_detected, cmd_detected,
+        cwe_sqli, cwe_xss, cwe_rce, cwe_crlf,
+        avg_score_ml, updated_at
     )
     VALUES (
         DATE(NEW.fecha),
@@ -99,6 +106,10 @@ BEGIN
         COALESCE((NEW.features_json->>'has_sql')::INTEGER, 0),
         COALESCE((NEW.features_json->>'has_xss')::INTEGER, 0),
         COALESCE((NEW.features_json->>'has_rce')::INTEGER, 0),
+        CASE WHEN NEW.cwe_family = 'sql'  THEN 1 ELSE 0 END,
+        CASE WHEN NEW.cwe_family = 'xss'  THEN 1 ELSE 0 END,
+        CASE WHEN NEW.cwe_family = 'rce'  THEN 1 ELSE 0 END,
+        CASE WHEN NEW.cwe_family = 'crlf' THEN 1 ELSE 0 END,
         NEW.score_ml,
         NOW()
     )
@@ -109,6 +120,10 @@ BEGIN
         sqli_detected  = waf_daily_summary.sqli_detected  + EXCLUDED.sqli_detected,
         xss_detected   = waf_daily_summary.xss_detected   + EXCLUDED.xss_detected,
         cmd_detected   = waf_daily_summary.cmd_detected   + EXCLUDED.cmd_detected,
+        cwe_sqli       = waf_daily_summary.cwe_sqli       + EXCLUDED.cwe_sqli,
+        cwe_xss        = waf_daily_summary.cwe_xss        + EXCLUDED.cwe_xss,
+        cwe_rce        = waf_daily_summary.cwe_rce        + EXCLUDED.cwe_rce,
+        cwe_crlf       = waf_daily_summary.cwe_crlf       + EXCLUDED.cwe_crlf,
         avg_score_ml   = ROUND(
                             (COALESCE(waf_daily_summary.avg_score_ml, 0) * waf_daily_summary.total_requests
                              + EXCLUDED.avg_score_ml) /
@@ -118,6 +133,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_daily_summary ON waf_events;
 CREATE TRIGGER trg_daily_summary
 AFTER INSERT ON waf_events
 FOR EACH ROW EXECUTE FUNCTION fn_update_daily_summary();

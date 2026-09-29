@@ -35,3 +35,9 @@ certs/
 
 # Documentación del proyecto (no parte del repo)
 docs/
+
+# Next.js — artefactos de build y dependencias del dashboard
+dashboard/.next/
+dashboard/node_modules/
+dashboard/next-env.d.ts
+dashboard/*.tsbuildinfo

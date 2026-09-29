@@ -159,7 +159,32 @@ services:
       retries: 5
       start_period: 10s
 
-  # ── Capa 0b: PYME PHP Backend ────────────────────────────────────
+  # ── Capa 0b: PYME PHP Backend (+ su base de datos MySQL) ────────
+  # MySQL aislado en la red pyme; credencial SOLO vía env (fail-closed:
+  # sin MYSQL_ROOT_PASSWORD el stack no levanta). El proxy es la única
+  # puerta de entrada a este backend (R1/R6).
+  mysql:
+    image: mysql:8.0
+    container_name: waf-pyme-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: bd_atel
+    volumes:
+      - pyme_mysql_data:/var/lib/mysql
+    networks:
+      - pyme-security-net
+    deploy:
+      resources:
+        limits:
+          cpus: ${MYSQL_CPU_LIMIT:-0.5}
+          memory: ${MYSQL_MEMORY_LIMIT:-512M}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   pyme-php-backend:
     build:
       context: ../../thesis/app-pyme/atel-back
@@ -168,7 +193,15 @@ services:
     networks:
       - pyme-security-net
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}
+      - DB_CONNECTION=${DB_MYSQL_CONNECTION}
+      - DB_HOST=${DB_MYSQL_HOST}
+      - DB_PORT=${DB_MYSQL_PORT}
+      - DB_DATABASE=${DB_MYSQL_DATABASE}
+      - DB_USERNAME=${DB_MYSQL_USERNAME}
+      - DB_PASSWORD=${DB_MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -267,5 +300,6 @@ networks:
 
 volumes:
   waf_db_data:
+  pyme_mysql_data:
   certbot-etc:
   certbot-webroot:

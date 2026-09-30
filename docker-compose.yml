@@ -119,7 +119,9 @@ services:
   # En modo dev (sin ACME_PRIMARY_DOMAIN) el entrypoint hace idle y el
   # proxy usa autofirmados de ./certs.
   certbot:
-    image: certbot/certbot:2
+    # Detras de profile: no levanta en el stack por defecto. Uso: docker compose --profile certbot up -d
+    image: certbot/certbot:v5.8.0
+    profiles: ["certbot"]
     container_name: waf-certbot
     entrypoint: ["/bin/sh", "/entrypoint.sh"]
     volumes:

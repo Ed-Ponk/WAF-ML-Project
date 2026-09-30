@@ -41,17 +41,27 @@ TS="$(date +%Y%m%d-%H%M%S)"
 # Valida <archivo>.partial y lo publica con mv solo si el dump está
 # completo. Elimina el .partial ante cualquier fallo.
 finalize_dump() {
-  local partial="$1" out="$2" sentinel="$3"
+  local partial="$1" out="$2" sentinel="$3" cola
   if ! gzip -t "$partial"; then
     echo "[backup] ERROR: el .gz no pasa gzip -t (dump corrupto): ${partial}" >&2
     rm -f "$partial"
     return 1
   fi
-  if ! gzip -cd "$partial" | grep -qF "$sentinel"; then
-    echo "[backup] ERROR: el dump no contiene '${sentinel}': ${partial}" >&2
-    rm -f "$partial"
-    return 1
-  fi
+  # No se usa 'gzip -cd | grep -qF': grep -q sale en cuanto encuentra el
+  # texto y, si queda salida pendiente, gzip muere por SIGPIPE. Bajo
+  # set -o pipefail eso convierte el pipeline en exit 141 y hace
+  # finalize_dump reporta un dump válido como corrupto (y lo borra).
+  # 'tail -n 5' consume todo el input, así que no hay salida temprana, y
+  # el match se hace en memoria contra las líneas de cierre.
+  cola="$(gzip -cd "$partial" | tail -n 5)"
+  case "$cola" in
+    *"$sentinel"*) ;;
+    *)
+      echo "[backup] ERROR: el dump no cierra con '${sentinel}': ${partial}" >&2
+      rm -f "$partial"
+      return 1
+      ;;
+  esac
   mv "$partial" "$out"
   echo "[backup] OK → ${out} ($(du -h "$out" | cut -f1))"
 }

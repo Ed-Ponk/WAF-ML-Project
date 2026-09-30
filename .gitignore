@@ -41,3 +41,6 @@ dashboard/.next/
 dashboard/node_modules/
 dashboard/next-env.d.ts
 dashboard/*.tsbuildinfo
+
+# Credenciales generadas por scripts/bootstrap-admin.sh
+secrets/

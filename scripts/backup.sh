@@ -6,6 +6,14 @@
 # - bd_atel (MySQL, PYME backend)        → backups/pyme-db-<ts>.sql.gz
 # - Rotación: conserva las últimas N copias (BACKUP_KEEP, default 7).
 #
+# Cada dump se escribe primero a <archivo>.partial y solo se publica con
+# mv cuando el comando terminó bien, el .gz pasa gzip -t y el contenido
+# tiene la línea de cierre del dump. Un .partial nunca cuenta como copia
+# válida ni entra en la poda.
+#
+# La contraseña de MySQL viaja por MYSQL_PWD (entorno) y nunca por -p,
+# para no quedar expuesta en la lista de argumentos del proceso.
+#
 # Uso:   scripts/backup.sh
 # ══════════════════════════════════════════════════════════════════
 set -euo pipefail
@@ -30,25 +38,56 @@ fi
 mkdir -p "$BACKUP_DIR"
 TS="$(date +%Y%m%d-%H%M%S)"
 
+# Valida <archivo>.partial y lo publica con mv solo si el dump está
+# completo. Elimina el .partial ante cualquier fallo.
+finalize_dump() {
+  local partial="$1" out="$2" sentinel="$3"
+  if ! gzip -t "$partial"; then
+    echo "[backup] ERROR: el .gz no pasa gzip -t (dump corrupto): ${partial}" >&2
+    rm -f "$partial"
+    return 1
+  fi
+  if ! gzip -cd "$partial" | grep -qF "$sentinel"; then
+    echo "[backup] ERROR: el dump no contiene '${sentinel}': ${partial}" >&2
+    rm -f "$partial"
+    return 1
+  fi
+  mv "$partial" "$out"
+  echo "[backup] OK → ${out} ($(du -h "$out" | cut -f1))"
+}
+
 backup_postgres() {
   local out="$BACKUP_DIR/waf-db-${TS}.sql.gz"
+  local partial="${out}.partial"
   echo "[backup] PostgreSQL → ${out}"
-  docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" | gzip > "$out"
+  if ! docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" | gzip > "$partial"; then
+    echo "[backup] ERROR: pg_dump falló para ${DB_NAME}. No se publica nada." >&2
+    rm -f "$partial"
+    return 1
+  fi
+  finalize_dump "$partial" "$out" "PostgreSQL database dump complete"
 }
 
 backup_mysql() {
-  if [ -n "$MYSQL_ROOT_PASSWORD" ]; then
-    local out="$BACKUP_DIR/pyme-db-${TS}.sql.gz"
-    echo "[backup] MySQL → ${out}"
-    docker exec -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c \
-      'exec mysqldump --no-tablespaces -uroot -p"$MYSQL_ROOT_PASSWORD" bd_atel' 2>/dev/null | gzip > "$out"
-  else
+  local out="$BACKUP_DIR/pyme-db-${TS}.sql.gz"
+  local partial="${out}.partial"
+  if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
     echo "[backup] MYSQL_ROOT_PASSWORD no definido; se omite el backup de la BD PYME."
+    return 0
   fi
+  echo "[backup] MySQL → ${out}"
+  if ! MYSQL_PWD="$MYSQL_ROOT_PASSWORD" docker exec -e MYSQL_PWD "$MYSQL_CONTAINER" \
+      mysqldump --no-tablespaces -uroot bd_atel | gzip > "$partial"; then
+    echo "[backup] ERROR: mysqldump falló para bd_atel. No se publica nada." >&2
+    rm -f "$partial"
+    return 1
+  fi
+  finalize_dump "$partial" "$out" "-- Dump completed on"
 }
 
 prune() {
   local pattern="$1"
+  # Solo archivos ya publicados (sin .partial).
   ls -1t "$BACKUP_DIR"/$pattern 2>/dev/null | tail -n +$((BACKUP_KEEP + 1)) | while read -r f; do
     echo "[backup] Poda: ${f}"
     rm -f "$f"

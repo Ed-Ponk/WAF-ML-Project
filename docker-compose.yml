@@ -197,6 +197,9 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
+      - APP_KEY=${PYME_APP_KEY:?PYME_APP_KEY no esta definida en .env}
+      - PASSPORT_PRIVATE_KEY=${PYME_PASSPORT_PRIVATE_KEY:?PYME_PASSPORT_PRIVATE_KEY no esta definida en .env}
+      - PASSPORT_PUBLIC_KEY=${PYME_PASSPORT_PUBLIC_KEY:?PYME_PASSPORT_PUBLIC_KEY no esta definida en .env}
       - DB_CONNECTION=${DB_MYSQL_CONNECTION}
       - DB_HOST=${DB_MYSQL_HOST}
       - DB_PORT=${DB_MYSQL_PORT}

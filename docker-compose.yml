@@ -142,7 +142,7 @@ services:
   # ── Capa 0a: PYME React Frontend ──────────────────────────────────
   pyme-react-frontend:
     build:
-      context: ../../atel-upload/atel-front
+      context: ../../atel-upload/app-pyme/atel-front
     container_name: pyme-react-frontend
     restart: unless-stopped
     networks:
@@ -198,7 +198,7 @@ services:
 
   pyme-php-backend:
     build:
-      context: ../../atel-upload/atel-back
+      context: ../../atel-upload/app-pyme/atel-back
     container_name: pyme-php-backend
     restart: unless-stopped
     networks:
@@ -323,4 +323,3 @@ volumes:
   pyme_mysql_data:
   certbot-etc:
   certbot-webroot:
-

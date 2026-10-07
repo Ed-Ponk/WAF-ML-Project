@@ -109,7 +109,8 @@ services:
           cpus: ${PROXY_CPU_LIMIT:-0.5}
           memory: ${PROXY_MEMORY_LIMIT:-256M}
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -141,7 +142,7 @@ services:
   # ── Capa 0a: PYME React Frontend ──────────────────────────────────
   pyme-react-frontend:
     build:
-      context: ../../thesis/app-pyme/atel-front
+      context: ../../atel-upload/atel-front
     container_name: pyme-react-frontend
     restart: unless-stopped
     networks:
@@ -155,7 +156,11 @@ services:
           memory: ${PYME_FRONT_MEMORY_LIMIT:-512M}
     # NO ports exposed — traffic enters through proxy only (R1)
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:5173/ >/dev/null 2>&1 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:5173/ >/dev/null 2>&1 || exit 1",
+        ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -182,14 +187,18 @@ services:
           cpus: ${MYSQL_CPU_LIMIT:-0.5}
           memory: ${MYSQL_MEMORY_LIMIT:-512M}
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   pyme-php-backend:
     build:
-      context: ../../thesis/app-pyme/atel-back
+      context: ../../atel-upload/atel-back
     container_name: pyme-php-backend
     restart: unless-stopped
     networks:
@@ -248,7 +257,11 @@ services:
           memory: ${DASHBOARD_MEMORY_LIMIT:-768M}
     # Liveness via la raiz con basePath (basePath: /dashboard en next.config.js).
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:3000/dashboard/ >/dev/null 2>&1 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --spider -q http://127.0.0.1:3000/dashboard/ >/dev/null 2>&1 || exit 1",
+        ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -310,3 +323,4 @@ volumes:
   pyme_mysql_data:
   certbot-etc:
   certbot-webroot:
+

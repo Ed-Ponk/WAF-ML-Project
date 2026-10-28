@@ -14,6 +14,23 @@
 # Flujo TLS (MitM legítimo):
 #   Cliente → HTTPS :443 → Nginx descifra → HTTP plano → Backend
 # ══════════════════════════════════════════════════════════════════
+# Mapeo dominio → app_slug / backend (MVP estático, sin UUIDs hardcodeados)
+# ══════════════════════════════════════════════════════════════════
+map $host $resolved_app_slug {
+    default        "default";
+    ${PYME_DOMAIN} "default";
+    ${WAF_DOMAIN}  "default";
+}
+
+resolver 127.0.0.11 valid=30s ipv6=off;
+
+map $host $resolved_backend {
+    default        http://pyme-php-backend:80;
+    ${PYME_DOMAIN} http://pyme-php-backend:80;
+    ${WAF_DOMAIN}  http://pyme-php-backend:80;
+}
+
+# ══════════════════════════════════════════════════════════════════
 
 # ── HTTP: PYME Frontend + API legado ────────────────────────────
 server {
@@ -38,7 +55,8 @@ server {
     # STATIC ASSETS — Frontend SPA (NO ML check)
     # ══════════════════════════════════════════════════════════
     location / {
-        proxy_pass http://pyme-react-frontend:5173;
+        set $frontend_upstream pyme-react-frontend:5173;
+        proxy_pass http://$frontend_upstream;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -52,7 +70,8 @@ server {
     location /dashboard {
         auth_request off;
 
-        proxy_pass http://waf-dashboard:3000;
+        set $dashboard_upstream waf-dashboard:3000;
+        proxy_pass http://$dashboard_upstream;
 
         # ── HTTP Security Headers (dashboard only) ─────────────
         add_header X-Frame-Options "DENY" always;
@@ -77,7 +96,8 @@ server {
     # El ml-engine recibe el request COMPLETO (con body), lo inspecciona,
     # y si es seguro, lo reenvía al backend PHP. Si es ataque, devuelve 403.
     location /api/ {
-        proxy_pass http://ml-engine:8000;
+        set $ml_upstream ml-engine-test:8000;
+        proxy_pass http://$ml_upstream;
         proxy_pass_request_body on;
 
         error_page 403 =403 /403.html;
@@ -88,7 +108,8 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
-        proxy_set_header X-Backend http://pyme-php-backend:80;
+        proxy_set_header X-App-Slug $resolved_app_slug;
+        proxy_set_header X-Backend http://pyme-php-backend-test:80;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;
@@ -135,7 +156,8 @@ server {
         # Matches both /dashboard and /dashboard/* (with or without trailing path)
         rewrite ^/(dashboard(/.*)?)$ /$1 break;
         rewrite ^/(.*)$ /dashboard/$1 break;
-        proxy_pass http://waf-dashboard:3000;
+        set $dashboard_upstream waf-dashboard:3000;
+        proxy_pass http://$dashboard_upstream;
 
         # ── HTTP Security Headers (dashboard only) ─────────────
         add_header X-Frame-Options "DENY" always;
@@ -184,7 +206,8 @@ server {
     # STATIC ASSETS — Frontend SPA (NO ML check)
     # ══════════════════════════════════════════════════════════
     location / {
-        proxy_pass http://pyme-react-frontend:5173;
+        set $frontend_upstream pyme-react-frontend:5173;
+        proxy_pass http://$frontend_upstream;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -198,7 +221,8 @@ server {
     location /dashboard {
         auth_request off;
 
-        proxy_pass http://waf-dashboard:3000;
+        set $dashboard_upstream waf-dashboard:3000;
+        proxy_pass http://$dashboard_upstream;
 
         # ── HTTP Security Headers (dashboard only) ─────────────
         add_header X-Frame-Options "DENY" always;
@@ -222,7 +246,8 @@ server {
     # API TRAFFIC — WAF-ML proxy (decide BLOCK o reenvía al backend)
     # ══════════════════════════════════════════════════════════
     location /api/ {
-        proxy_pass http://ml-engine:8000;
+        set $ml_upstream ml-engine-test:8000;
+        proxy_pass http://$ml_upstream;
         proxy_pass_request_body on;
 
         error_page 403 =403 /403.html;
@@ -233,7 +258,8 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
-        proxy_set_header X-Backend http://pyme-php-backend:80;
+        proxy_set_header X-App-Slug $resolved_app_slug;
+        proxy_set_header X-Backend http://pyme-php-backend-test:80;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;
@@ -282,7 +308,8 @@ server {
         # Matches both /dashboard and /dashboard/* (with or without trailing path)
         rewrite ^/(dashboard(/.*)?)$ /$1 break;
         rewrite ^/(.*)$ /dashboard/$1 break;
-        proxy_pass http://waf-dashboard:3000;
+        set $dashboard_upstream waf-dashboard:3000;
+        proxy_pass http://$dashboard_upstream;
 
         # ── HTTP Security Headers (dashboard only) ─────────────
         add_header X-Frame-Options "DENY" always;

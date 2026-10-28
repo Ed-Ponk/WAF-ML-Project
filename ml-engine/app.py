@@ -1,3 +1,4 @@
+from typing import Dict, Any, Optional
 import os, sys, time, json, base64, hashlib, hmac
 import pandas as pd
 import asyncpg, asyncio
@@ -315,6 +316,18 @@ async def shutdown():
 
 _hw_task = None
 
+# ══════════════════════════════════════════════════════════════════
+# MULTI-APP CACHE (waf_apps)
+# ══════════════════════════════════════════════════════════════════
+apps_cache: Dict[str, Dict[str, Any]] = {}  # key = app_id (uuid string)
+apps_by_slug: Dict[str, Dict[str, Any]] = {}  # key = slug
+default_app_id: Optional[str] = None
+default_app_slug: str = os.environ.get("DEFAULT_APP_SLUG", "default")
+_apps_cache_last_refresh = 0.0
+_APPS_CACHE_TTL = float(os.environ.get("APPS_CACHE_TTL", "30"))
+DEFAULT_APP_SLUG = default_app_slug
+
+
 async def _read_cpu_pct() -> float:
     """Lee uso de CPU con psutil (media sobre 1s de intervalo)."""
     try:
@@ -370,6 +383,10 @@ async def startup():
         print("⚠️ ADVERTENCIA: Iniciando en modo LOCAL. Los logs no se guardarán en la DB.")
         db_pool = None
     else:
+        # Cargar cache de apps ANTES de aceptar requests (bloqueante)
+        await load_apps_cache(force=True)
+        # Lanzar refresh periódico
+        asyncio.create_task(refresh_apps_cache_loop())
         # Iniciar background polling de hardware
         _hw_task = asyncio.create_task(_poll_hardware_metrics())
         print("✅ Monitoreo de hardware iniciado (cada 30s)")
@@ -401,6 +418,90 @@ def _should_use_fast_path(original_method: str, f_dict: dict) -> bool:
     )
 
 
+
+async def load_apps_cache(force: bool = False) -> None:
+    global apps_cache, apps_by_slug, default_app_id, _apps_cache_last_refresh
+    if not db_pool:
+        return
+    now = time.time()
+    if not force and _apps_cache_last_refresh and (now - _apps_cache_last_refresh) < _APPS_CACHE_TTL:
+        return
+    try:
+        async with db_pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT id::text AS id, slug, domain, backend_url, enabled FROM waf_apps"
+            )
+        new_cache: Dict[str, Dict[str, Any]] = {}
+        new_by_slug: Dict[str, Dict[str, Any]] = {}
+        new_default = None
+        for r in rows:
+            app_info = {
+                "id": r["id"],
+                "slug": r["slug"],
+                "domain": r["domain"],
+                "backend_url": r["backend_url"],
+                "enabled": bool(r["enabled"]),
+            }
+            new_cache[r["id"]] = app_info
+            new_by_slug[r["slug"]] = app_info
+            if r["slug"] == DEFAULT_APP_SLUG and r["enabled"]:
+                new_default = r["id"]
+        # Reemplazar dicts completos (sin mutación in-place)
+        apps_cache = new_cache
+        apps_by_slug = new_by_slug
+        if new_default:
+            default_app_id = new_default
+        elif default_app_id is None and apps_cache:
+            print(f"⚠️ No se encontró app '{DEFAULT_APP_SLUG}' habilitada en waf_apps")
+        _apps_cache_last_refresh = time.time()
+        if default_app_id:
+            print(f"✅ apps_cache cargado: {len(apps_cache)} apps, default_app_id={default_app_id}")
+        else:
+            print(f"✅ apps_cache cargado: {len(apps_cache)} apps, default_app_id=None")
+    except Exception as e:
+        print(f"⚠️ Error cargando apps_cache: {e}")
+        # Mantener cache anterior si falla
+
+async def refresh_apps_cache_loop() -> None:
+    while True:
+        try:
+            await asyncio.sleep(_APPS_CACHE_TTL)
+            await load_apps_cache(force=True)
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            print(f"⚠️ Error en refresh_apps_cache_loop: {e}")
+            await asyncio.sleep(5)
+
+def get_resolved_app_id_from_header(x_app_slug: Optional[str]) -> str:
+    global default_app_id
+    slug = None
+    if x_app_slug:
+        slug = str(x_app_slug).strip()
+    if slug and slug in apps_by_slug:
+        app = apps_by_slug[slug]
+        if app.get("enabled"):
+            return app["id"]
+        else:
+            print(f"⚠️ X-App-Slug deshabilitada (header={slug}). Usando app default {default_app_id}")
+    elif slug:
+        print(f"⚠️ X-App-Slug inválido o desconocido (header={slug}). Usando app default {default_app_id}")
+    else:
+        print(f"⚠️ X-App-Slug vacío o ausente. Usando app default {default_app_id}")
+    if default_app_id and default_app_id in apps_cache and apps_cache[default_app_id].get("enabled"):
+        return default_app_id
+    # Intentar por slug default
+    if DEFAULT_APP_SLUG in apps_by_slug and apps_by_slug[DEFAULT_APP_SLUG].get("enabled"):
+        default_app_id = apps_by_slug[DEFAULT_APP_SLUG]["id"]
+        return default_app_id
+    # Último recurso
+    for aid, app in apps_cache.items():
+        if app.get("enabled"):
+            print(f"⚠️ Usando primera app habilitada como fallback: {aid}")
+            return aid
+    raise RuntimeError("No hay app default disponible y cache vacío")
+
+
 # ══════════════════════════════════════════════════════════════════
 # 5. ENDPOINT PRINCIPAL (TRES ZONAS)
 # ══════════════════════════════════════════════════════════════════
@@ -411,6 +512,15 @@ async def waf_core(request: Request, path_name: str):
     
     original_url = request.headers.get("x-original-uri", "")
     original_method = request.headers.get("x-original-method", request.method)
+    # Resolver app_id desde header X-App-Slug (inyectado por Nginx). NO confiar en Host.
+    app_header = request.headers.get("x-app-slug") or request.headers.get("X-App-Slug") or request.headers.get("x-app-id") or request.headers.get("X-App-Id")
+    try:
+        app_id_resolved = get_resolved_app_id_from_header(app_header)
+    except Exception as e:
+        print(f"⚠️ Error resolviendo app_id: {e}. Usando default si existe")
+        app_id_resolved = default_app_id if default_app_id else None
+        if not app_id_resolved:
+            raise
 
     # Fallback si no viene el header (benchmark directo sin nginx)
     if not original_url:
@@ -509,7 +619,8 @@ async def waf_core(request: Request, path_name: str):
             verdict, 
             action, 
             latency, 
-            f_dict
+            f_dict,
+            app_id_resolved
         ))
 
     if action == "BLOCK":
@@ -612,23 +723,25 @@ async def waf_core(request: Request, path_name: str):
     )
 
 
-async def save_to_db(client_ip: str, user_agent: str, method: str, url_inspect: str, payload: str, score: float, verdict: int, action: str, latency: float, f_dict: dict):
+async def save_to_db(client_ip: str, user_agent: str, method: str, url_inspect: str, payload: str, score: float, verdict: int, action: str, latency: float, f_dict: dict, app_id: str):
     # Validamos que el pool de conexiones exista antes de intentar usarlo
     if db_pool:
         try:
             async with db_pool.acquire() as conn:
                 await conn.execute('''
                     INSERT INTO waf_events (
+                        app_id,
                         ip_origen, user_agent, metodo_http, url, payload,
                         url_length, payload_length, special_char_count, shannon_entropy,
                         score_ml, veredicto, accion, tiempo_inferencia_ms,
                         features_json, cwe_family, waf_version
-                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
                 ''', 
+                app_id,
                 client_ip, 
                 user_agent,
                 method, 
-            url_inspect if 'url_inspect' in locals() else original_url, 
+                url_inspect,
                 payload,
                 f_dict.get('url_path_len', 0), 
                 len(payload), 

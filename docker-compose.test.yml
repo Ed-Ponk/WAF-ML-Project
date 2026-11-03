@@ -1,0 +1,27 @@
+services:
+  database-test:
+    image: postgres:15-alpine
+    container_name: waf-db-test
+    environment:
+      POSTGRES_USER: wafuser
+      POSTGRES_PASSWORD: wafpass
+      POSTGRES_DB: waf_ml
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - waf_db_test_data:/var/lib/postgresql/data
+    networks:
+      - waf-test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wafuser -d waf_ml"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  waf_db_test_data:
+
+networks:
+  waf-test:
+    driver: bridge

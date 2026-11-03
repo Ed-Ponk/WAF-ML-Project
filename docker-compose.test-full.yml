@@ -1,0 +1,102 @@
+services:
+  ml-engine-test:
+    build: ./ml-engine
+    container_name: waf-ml-engine-test
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    networks:
+      - waf-test-net
+    volumes:
+      - ./ml-engine:/app
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    environment:
+      - DATABASE_URL=postgresql://wafuser:wafpass@host.docker.internal:5433/waf_ml
+      - THRESHOLD_BLOCK=${THRESHOLD_BLOCK:-0.7}
+      - THRESHOLD_LOG=${THRESHOLD_LOG:-0.3}
+      - WAF_DEBUG=${WAF_DEBUG:-false}
+      - WAF_BENCHMARK_MODE=0
+      - JWT_SECRET=${JWT_SECRET}
+      - BACKEND_ALLOWLIST=http://pyme-php-backend-test:80
+      - APPS_CACHE_TTL=30
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  pyme-php-backend-test:
+    build:
+      context: /home/ponkward/projects/atel-upload/atel-back
+    container_name: pyme-php-backend-test
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - waf-test-net
+
+  pyme-react-frontend-test:
+    build:
+      context: /home/ponkward/projects/atel-upload/atel-front
+    container_name: pyme-react-frontend-test
+    restart: unless-stopped
+    expose:
+      - "5173"
+    networks:
+      - waf-test-net
+
+  waf-dashboard-test:
+    build: ./dashboard
+    container_name: waf-dashboard-test
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - waf-test-net
+    environment:
+      - DATABASE_URL=postgresql://wafuser:wafpass@host.docker.internal:5433/waf_ml
+      - JWT_SECRET=${JWT_SECRET}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  waf-proxy-test:
+    build: ./nginx
+    container_name: waf-proxy-test
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs/
+      - ./nginx/403.html:/usr/share/nginx/html/403.html:ro
+      - ./nginx/pyme_index.html:/usr/share/nginx/html/pyme/pyme_index.html:ro
+      - ./nginx/default.conf.template:/etc/nginx/conf.d/default.conf.template:ro
+    networks:
+      - waf-test-net
+    depends_on:
+      ml-engine-test:
+        condition: service_healthy
+      waf-dashboard-test:
+        condition: service_started
+      pyme-react-frontend-test:
+        condition: service_started
+    environment:
+      - WAF_ENV=development
+      - WAF_DOMAIN=localhost
+      - PYME_DOMAIN=pyme.waf.local
+      - ADMIN_DOMAIN=admin.waf.local
+      - CERT_PATH=/etc/nginx/certs/waf.crt
+      - KEY_PATH=/etc/nginx/certs/waf.key
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+networks:
+  waf-test-net:
+    driver: bridge

@@ -96,7 +96,7 @@ server {
     # El ml-engine recibe el request COMPLETO (con body), lo inspecciona,
     # y si es seguro, lo reenvía al backend PHP. Si es ataque, devuelve 403.
     location /api/ {
-        set $ml_upstream ml-engine-test:8000;
+        set $ml_upstream ml-engine:8000;
         proxy_pass http://$ml_upstream;
         proxy_pass_request_body on;
 
@@ -109,7 +109,7 @@ server {
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
         proxy_set_header X-App-Slug $resolved_app_slug;
-        proxy_set_header X-Backend http://pyme-php-backend-test:80;
+        proxy_set_header X-Backend $resolved_backend;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;
@@ -154,9 +154,13 @@ server {
         # If URL already has /dashboard prefix (from Next.js redirect), proxy as-is
         # to avoid double /dashboard/dashboard/ paths.
         # Matches both /dashboard and /dashboard/* (with or without trailing path)
+        # Set BEFORE any `rewrite ... break`: `break` stops the rewrite
+        # module, so a later `set` would never run and proxy_pass would
+        # see an uninitialized variable.
+        set $dashboard_upstream waf-dashboard:3000;
+
         rewrite ^/(dashboard(/.*)?)$ /$1 break;
         rewrite ^/(.*)$ /dashboard/$1 break;
-        set $dashboard_upstream waf-dashboard:3000;
         proxy_pass http://$dashboard_upstream;
 
         # ── HTTP Security Headers (dashboard only) ─────────────
@@ -246,7 +250,7 @@ server {
     # API TRAFFIC — WAF-ML proxy (decide BLOCK o reenvía al backend)
     # ══════════════════════════════════════════════════════════
     location /api/ {
-        set $ml_upstream ml-engine-test:8000;
+        set $ml_upstream ml-engine:8000;
         proxy_pass http://$ml_upstream;
         proxy_pass_request_body on;
 
@@ -259,7 +263,7 @@ server {
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
         proxy_set_header X-App-Slug $resolved_app_slug;
-        proxy_set_header X-Backend http://pyme-php-backend-test:80;
+        proxy_set_header X-Backend $resolved_backend;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;
@@ -306,9 +310,13 @@ server {
         # If URL already has /dashboard prefix (from Next.js redirect), proxy as-is
         # to avoid double /dashboard/dashboard/ paths.
         # Matches both /dashboard and /dashboard/* (with or without trailing path)
+        # Set BEFORE any `rewrite ... break`: `break` stops the rewrite
+        # module, so a later `set` would never run and proxy_pass would
+        # see an uninitialized variable.
+        set $dashboard_upstream waf-dashboard:3000;
+
         rewrite ^/(dashboard(/.*)?)$ /$1 break;
         rewrite ^/(.*)$ /dashboard/$1 break;
-        set $dashboard_upstream waf-dashboard:3000;
         proxy_pass http://$dashboard_upstream;
 
         # ── HTTP Security Headers (dashboard only) ─────────────

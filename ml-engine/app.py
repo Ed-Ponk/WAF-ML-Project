@@ -7,6 +7,7 @@ import psutil
 from urllib.parse import unquote, parse_qs
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, Response
+from starlette.datastructures import Headers
 import httpx
 from safe_unpickler import load_bundle_safe, SecurityError
 
@@ -529,6 +530,7 @@ async def waf_core(request: Request, path_name: str):
             original_url += "?" + request.url.query
 
     client_ip     = request.headers.get("x-real-ip", request.client.host)
+    is_auth_endpoint = request.url.path.startswith("/api/auth/callback/credentials")
 
     payload = ""
     f_dict = {"url_path_len": 0, "payload_entropy": 0}
@@ -572,7 +574,10 @@ async def waf_core(request: Request, path_name: str):
         #print(f"🔍 DEBUG FEATURES DICT: {f_dict}")
 
         # CAPA 1: Descarte Rápido
-        if _should_use_fast_path(original_method, f_dict):
+        if is_auth_endpoint:
+            score = 0.05
+            print("⚡ Auth callback — permitido sin scoring ML")
+        elif _should_use_fast_path(original_method, f_dict):
             score = 0.05
             print("⚡ Fast path — tráfico limpio aprobado")
         else:
@@ -589,7 +594,10 @@ async def waf_core(request: Request, path_name: str):
         # En este contexto, request.method es GET (subrequest auth_request).
         # Usamos request.method en lugar de original_method porque sin cuerpo
         # no hay diferencia entre GET y POST para el análisis de URL.
-        if _should_use_fast_path(request.method, f_dict):
+        if is_auth_endpoint:
+            score = 0.05
+            print("⚡ Auth callback — permitido sin scoring ML (timeout handler)")
+        elif _should_use_fast_path(request.method, f_dict):
             score = 0.05
             print("⚡ Fast path — tráfico limpio aprobado (timeout handler)")
         else:
@@ -672,22 +680,41 @@ async def waf_core(request: Request, path_name: str):
                     follow_redirects=False,
                 )
 
-            # Agregar headers del WAF a la respuesta del backend
-            resp_headers = dict(backend_resp.headers)
-            resp_headers["X-WAF-Action"] = action
-            resp_headers["X-WAF-Score"] = str(round(float(score), 4))
+            # Preservar headers duplicados (Set-Cookie) y quitar hop-by-hop
+            hop_by_hop = {
+                "content-length", "content-encoding", "transfer-encoding",
+                "connection", "keep-alive", "proxy-authenticate",
+                "proxy-authorization", "te", "trailer", "upgrade",
+            }
+            resp_header_list = [
+                (k, v)
+                for k, v in backend_resp.headers.multi_items()
+                if k.lower() not in hop_by_hop
+            ]
 
             # Reescribir Location si apunta al hostname interno del backend
             external_host = request.headers.get("host", "localhost")
             scheme = request.headers.get("x-forwarded-proto", "http")
             backend_host = backend_url.rstrip("/")
 
-            location = resp_headers.get("location", "")
-            if location and backend_host in location:
-                resp_headers["location"] = location.replace(
-                    backend_host,
-                    f"{scheme}://{external_host}",
+            resp_header_list = [
+                (
+                    k,
+                    v.replace(backend_host, f"{scheme}://{external_host}")
+                    if k.lower() == "location" and backend_host in v
+                    else v,
                 )
+                for k, v in resp_header_list
+            ]
+
+            resp_header_list.append(("X-WAF-Action", action))
+            resp_header_list.append(("X-WAF-Score", str(round(float(score), 4))))
+            resp_headers = Headers(
+                raw=[
+                    (k.lower().encode("latin-1"), v.encode("latin-1"))
+                    for k, v in resp_header_list
+                ]
+            )
 
             # Reescribir body si contiene el hostname interno
             body = backend_resp.content

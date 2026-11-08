@@ -1,12 +1,23 @@
+# Rotación de logs reutilizable (evita que json-file llene el disco del VPS)
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   # ── Base de datos WAF (PostgreSQL, telemetría + dashboard) ─────
+  # NOTA: init.sql solo se ejecuta cuando el volumen waf_db_data se crea por
+  # primera vez. Cambios posteriores requieren migraciones manuales.
   database:
     image: postgres:15-alpine
     container_name: waf-db
+    restart: unless-stopped
+    logging: *default-logging
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:?DB_USER no esta definida en .env}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no esta definida en .env}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME no esta definida en .env}
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - waf_db_data:/var/lib/postgresql/data
@@ -28,39 +39,43 @@ services:
     build: ./ml-engine
     container_name: waf-ml-engine
     restart: unless-stopped
+    logging: *default-logging
     expose:
       - "${ML_ENGINE_PORT:-8000}"
     networks:
       - waf-backend
       - pyme-security-net
+    # TODO: montar todo el código fuente sobre /app es práctico en desarrollo,
+    # pero en producción anula el COPY del Dockerfile. Valorar montar solo
+    # la carpeta de modelos o un volumen nombrado.
     volumes:
       - ./ml-engine:/app
-    command: uvicorn app:app --host 0.0.0.0 --port ${ML_ENGINE_PORT}
+    command: uvicorn app:app --host 0.0.0.0 --port ${ML_ENGINE_PORT:-8000}
     depends_on:
       database:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}
-      - THRESHOLD_BLOCK=${THRESHOLD_BLOCK}
-      - THRESHOLD_LOG=${THRESHOLD_LOG}
-      - WAF_DEBUG=${WAF_DEBUG}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT:-5432}/${DB_NAME}
+      - THRESHOLD_BLOCK=${THRESHOLD_BLOCK:?THRESHOLD_BLOCK no esta definida en .env}
+      - THRESHOLD_LOG=${THRESHOLD_LOG:?THRESHOLD_LOG no esta definida en .env}
+      - WAF_DEBUG=${WAF_DEBUG:-0}
       # 0=fast path activado (tráfico GET limpio saltea inferencia ML)
       # 1=desactivado (cada request pasa por el ensemble - solo para benchmark)
       - WAF_BENCHMARK_MODE=0
-      - JWT_SECRET=${JWT_SECRET}
-      - BACKEND_ALLOWLIST=${BACKEND_ALLOWLIST:-http://pyme-php-backend:80}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no esta definida en .env}
+      - BACKEND_ALLOWLIST=${BACKEND_ALLOWLIST:-http://pyme-php-backend:80,http://maderera-app:3000}
     deploy:
       resources:
         limits:
           cpus: ${ML_CPU_LIMIT:-1.0}
-          memory: ${ML_MEMORY_LIMIT}
+          memory: ${ML_MEMORY_LIMIT:-1G}
     healthcheck:
       test:
         [
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:${ML_ENGINE_PORT}/health', timeout=5)",
+          "import urllib.request; urllib.request.urlopen('http://localhost:${ML_ENGINE_PORT:-8000}/health', timeout=5)",
         ]
       interval: 15s
       timeout: 5s
@@ -72,6 +87,7 @@ services:
     build: ./nginx
     container_name: waf-proxy
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "80:80"
       - "443:443"
@@ -96,11 +112,16 @@ services:
         condition: service_healthy
       pyme-react-frontend:
         condition: service_healthy
+      pyme-php-backend:
+        condition: service_healthy
+      maderera-app:
+        condition: service_healthy
     environment:
       - WAF_ENV=${WAF_ENV:-development}
       - WAF_DOMAIN=${WAF_DOMAIN:-localhost}
       - PYME_DOMAIN=${PYME_DOMAIN:-pyme.waf.local}
       - ADMIN_DOMAIN=${ADMIN_DOMAIN:-admin.waf.local}
+      - MADERERA_DOMAIN=${MADERERA_DOMAIN:-maderera.theedudev.com}
       - CERT_PATH=${CERT_PATH:-/etc/nginx/certs/waf.crt}
       - KEY_PATH=${KEY_PATH:-/etc/nginx/certs/waf.key}
     deploy:
@@ -124,6 +145,7 @@ services:
     image: certbot/certbot:v5.8.0
     profiles: ["certbot"]
     container_name: waf-certbot
+    logging: *default-logging
     entrypoint: ["/bin/sh", "/entrypoint.sh"]
     volumes:
       - ./nginx/certbot-entrypoint.sh:/entrypoint.sh:ro
@@ -140,11 +162,14 @@ services:
         condition: service_healthy
 
   # ── Capa 0a: PYME React Frontend ──────────────────────────────────
+  # Los contextos de build ../../atel-upload/* dependen de la estructura de
+  # carpetas del VPS. Documentar en el README o pasar a submódulos git.
   pyme-react-frontend:
     build:
       context: ../../atel-upload/atel-front
     container_name: pyme-react-frontend
     restart: unless-stopped
+    logging: *default-logging
     networks:
       - pyme-security-net
     environment:
@@ -162,14 +187,59 @@ services:
       retries: 5
       start_period: 10s
 
+  # ── Maderera (Next.js) ────────────────────────────────────────────
+  # TODO seguridad: comparte la base Postgres del WAF con las mismas
+  # credenciales. Ideal: base/rol dedicado con permisos limitados.
+  maderera-app:
+    build:
+      context: ../../atel-upload/projecto_landing
+    container_name: waf-maderera-app
+    restart: unless-stopped
+    logging: *default-logging
+    expose:
+      - "3000"
+    networks:
+      - waf-frontend
+      - waf-backend
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT:-5432}/${DB_NAME}
+      - AUTH_SECRET=${MADERERA_AUTH_SECRET:?MADERERA_AUTH_SECRET no esta definida en .env}
+      - NEXT_PUBLIC_SITE_URL=https://${MADERERA_DOMAIN:-maderera.theedudev.com}
+      - AUTH_TRUST_HOST=true
+      - AUTH_URL=https://${MADERERA_DOMAIN:-maderera.theedudev.com}
+    depends_on:
+      database:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: ${MADERERA_CPU_LIMIT:-0.5}
+          memory: ${MADERERA_MEMORY_LIMIT:-768M}
+    # Usa node (ya presente en la imagen) para no depender de wget/curl.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3000/',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   # ── Capa 0b: PYME PHP Backend (+ su base de datos MySQL) ────────
   # MySQL aislado en la red pyme; credencial SOLO vía env (fail-closed:
   # sin MYSQL_ROOT_PASSWORD el stack no levanta). El proxy es la única
   # puerta de entrada a este backend (R1/R6).
+  # TODO: MySQL 8.0 llegó a fin de vida (abril 2026). Planear migración a
+  # 8.4 LTS con backup previo del volumen pyme_mysql_data.
   mysql:
     image: mysql:8.0
     container_name: waf-pyme-db
     restart: unless-stopped
+    logging: *default-logging
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
       MYSQL_DATABASE: bd_atel
@@ -182,11 +252,12 @@ services:
         limits:
           cpus: ${MYSQL_CPU_LIMIT:-0.5}
           memory: ${MYSQL_MEMORY_LIMIT:-512M}
+    # MYSQL_PWD evita exponer la contraseña como argumento en la lista de procesos.
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent",
+          "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysqladmin ping -h localhost -uroot --silent",
         ]
       interval: 10s
       timeout: 5s
@@ -197,6 +268,7 @@ services:
       context: ../../atel-upload/atel-back
     container_name: pyme-php-backend
     restart: unless-stopped
+    logging: *default-logging
     networks:
       - pyme-security-net
     environment:
@@ -205,12 +277,12 @@ services:
       - APP_KEY=${PYME_APP_KEY:?PYME_APP_KEY no esta definida en .env}
       - PASSPORT_PRIVATE_KEY=${PYME_PASSPORT_PRIVATE_KEY:?PYME_PASSPORT_PRIVATE_KEY no esta definida en .env}
       - PASSPORT_PUBLIC_KEY=${PYME_PASSPORT_PUBLIC_KEY:?PYME_PASSPORT_PUBLIC_KEY no esta definida en .env}
-      - DB_CONNECTION=${DB_MYSQL_CONNECTION}
-      - DB_HOST=${DB_MYSQL_HOST}
-      - DB_PORT=${DB_MYSQL_PORT}
-      - DB_DATABASE=${DB_MYSQL_DATABASE}
-      - DB_USERNAME=${DB_MYSQL_USERNAME}
-      - DB_PASSWORD=${DB_MYSQL_PASSWORD}
+      - DB_CONNECTION=${DB_MYSQL_CONNECTION:-mysql}
+      - DB_HOST=${DB_MYSQL_HOST:-mysql}
+      - DB_PORT=${DB_MYSQL_PORT:-3306}
+      - DB_DATABASE=${DB_MYSQL_DATABASE:-bd_atel}
+      - DB_USERNAME=${DB_MYSQL_USERNAME:?DB_MYSQL_USERNAME no esta definida en .env}
+      - DB_PASSWORD=${DB_MYSQL_PASSWORD:?DB_MYSQL_PASSWORD no esta definida en .env}
     depends_on:
       mysql:
         condition: service_healthy
@@ -219,6 +291,20 @@ services:
         limits:
           cpus: ${PYME_PHP_CPU_LIMIT:-0.5}
           memory: ${PYME_PHP_MEMORY_LIMIT:-256M}
+    # Comprueba que el puerto 80 acepte conexiones usando el CLI de PHP.
+    # Si la imagen no incluye php CLI o escucha en otro puerto, ajustar.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "php",
+          "-r",
+          "exit(@fsockopen('127.0.0.1', 80) ? 0 : 1);",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     # NO ports directive — backend is NOT exposed to host (R1/R6)
 
   # ── Capa 0c: WAF Admin Dashboard (Next.js) ────────────────────────
@@ -227,6 +313,7 @@ services:
       context: ./dashboard
     container_name: waf-dashboard
     restart: unless-stopped
+    logging: *default-logging
     networks:
       - waf-backend
     volumes:
@@ -241,11 +328,13 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_HOST=database
-      - POSTGRES_PORT=${DB_PORT}
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}
-      - ML_ENGINE_URL=http://ml-engine:8000
-      - JWT_SECRET=${JWT_SECRET}
-      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - POSTGRES_PORT=${DB_PORT:-5432}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT:-5432}/${DB_NAME}
+      - ML_ENGINE_URL=http://ml-engine:${ML_ENGINE_PORT:-8000}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no esta definida en .env}
+      # Default seguro: en producción hay TLS. En desarrollo sobre http
+      # definir COOKIE_SECURE=false en .env.
+      - COOKIE_SECURE=${COOKIE_SECURE:-true}
     deploy:
       resources:
         limits:
@@ -267,17 +356,20 @@ services:
   # Se mantiene PUBLICADO (55555:51820/udp) a propósito: es la vía de
   # acceso admin al VPS (SSH/panel cerrados a internet). No exponer la
   # app por otros puertos: solo nginx 80/443 hacia internet.
+  # Fijar versión en .env (WIREGUARD_IMAGE) para builds reproducibles.
   vpn:
-    image: lscr.io/linuxserver/wireguard:latest
+    image: ${WIREGUARD_IMAGE:-lscr.io/linuxserver/wireguard:latest}
     container_name: waf-vpn
     restart: unless-stopped
+    logging: *default-logging
+    # SYS_MODULE eliminado: el kernel del host ya trae WireGuard.
+    # Si el contenedor falla al crear la interfaz, restituirlo.
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TZ:-UTC}
       - SERVERURL=auto
       - PEERS=1 # Genera 1 cliente (puedes poner 'admin,trabajador1')
       - PEERDNS=auto
@@ -285,8 +377,8 @@ services:
       - "55555:51820/udp"
     volumes:
       - ./config/vpn:/config
+    # Solo waf-backend (dashboard/ml-engine). Ya no ve waf-frontend.
     networks:
-      - waf-frontend
       - waf-backend
     deploy:
       resources:
@@ -295,15 +387,6 @@ services:
           memory: ${VPN_MEMORY_LIMIT:-128M}
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
-
-  # Backend simulado PYME — app web de prueba (Si se logra integrar el WAF con la app pyme, entonces comentar todo este servicio)
-  #pyme-app-back:
-  #image: nginx:alpine
-  #container_name: waf-pyme-back
-  #volumes:
-  # - ./nginx/pyme_index.html:/usr/share/nginx/html/index.html:ro
-  #networks:
-  # - waf-backend
 
 networks:
   waf-frontend:

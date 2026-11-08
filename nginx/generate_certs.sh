@@ -22,9 +22,10 @@ set -e
 : "${WAF_DOMAIN:=localhost}"
 : "${PYME_DOMAIN:=pyme.waf.local}"
 : "${ADMIN_DOMAIN:=admin.waf.local}"
+: "${MADERERA_DOMAIN:=maderera.waf.local}"
 : "${CERT_PATH:=/etc/nginx/certs/waf.crt}"
 : "${KEY_PATH:=/etc/nginx/certs/waf.key}"
-export WAF_DOMAIN PYME_DOMAIN ADMIN_DOMAIN CERT_PATH KEY_PATH
+export WAF_DOMAIN PYME_DOMAIN ADMIN_DOMAIN MADERERA_DOMAIN CERT_PATH KEY_PATH
 
 # ── Renderizar la config de Nginx (solo estas vars; las $punteras
 #    de nginx como $host/$scheme se preservan) ────────────────────
@@ -32,7 +33,7 @@ TEMPLATE_FILE="/etc/nginx/conf.d/default.conf.template"
 CONF_FILE="/etc/nginx/conf.d/default.conf"
 if [ -f "$TEMPLATE_FILE" ]; then
     echo "[WAF] 📄 Renderizando ${TEMPLATE_FILE} → ${CONF_FILE}"
-    envsubst '${WAF_DOMAIN} ${PYME_DOMAIN} ${ADMIN_DOMAIN} ${CERT_PATH} ${KEY_PATH}' \
+    envsubst '${WAF_DOMAIN} ${PYME_DOMAIN} ${ADMIN_DOMAIN} ${MADERERA_DOMAIN} ${CERT_PATH} ${KEY_PATH}' \
         < "$TEMPLATE_FILE" > "$CONF_FILE"
 else
     echo "[WAF] ⚠️  No se encontró ${TEMPLATE_FILE}; se usa ${CONF_FILE} si existe." >&2

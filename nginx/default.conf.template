@@ -20,6 +20,7 @@ map $host $resolved_app_slug {
     default        "default";
     ${PYME_DOMAIN} "default";
     ${WAF_DOMAIN}  "default";
+    ${MADERERA_DOMAIN} "default";
 }
 
 resolver 127.0.0.11 valid=30s ipv6=off;
@@ -28,6 +29,7 @@ map $host $resolved_backend {
     default        http://pyme-php-backend:80;
     ${PYME_DOMAIN} http://pyme-php-backend:80;
     ${WAF_DOMAIN}  http://pyme-php-backend:80;
+    ${MADERERA_DOMAIN} http://maderera-app:3000;
 }
 
 # ══════════════════════════════════════════════════════════════════
@@ -334,5 +336,71 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
+    }
+}
+
+# ── HTTP: Aplicación Maderera ──────────────────────────────────
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${MADERERA_DOMAIN};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Tráfico completo o estáticos dirigidos al servicio de la maderera
+    location / {
+        set $maderera_upstream maderera-app:3000;
+        proxy_pass http://$maderera_upstream;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Si la API de la maderera también pasa por la inspección WAF-ML:
+    location /api/ {
+        set $ml_upstream ml-engine:8000;
+        proxy_pass http://$ml_upstream;
+        proxy_pass_request_body on;
+
+        error_page 403 =403 /403.html;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header X-Original-Method $request_method;
+        proxy_set_header X-App-Slug $resolved_app_slug;
+        proxy_set_header X-Backend http://maderera-app:3000;
+
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+
+        client_max_body_size 10M;
+        client_body_buffer_size 128k;
+    }
+}
+
+# ── Maderera: HTTP → HTTPS (+ webroot de certbot) ───────────
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${MADERERA_DOMAIN};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
     }
 }

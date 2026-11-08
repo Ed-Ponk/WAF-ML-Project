@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   FileText,
+  Boxes,
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -51,6 +52,7 @@ export default function AdminLayout({
 
   const menuItems = [
     { label: "Panel General", icon: Activity, href: "/dashboard/admin" },
+    { label: "Aplicaciones", icon: Boxes, href: "/dashboard/admin/apps" },
     { label: "Alertas de Seguridad", icon: AlertTriangle, href: "/dashboard/admin/alerts" },
     { label: "Modelos", icon: FolderLock, href: "/dashboard/admin/models" },
     { label: "Línea Base", icon: Settings, href: "/dashboard/admin/baselines" },

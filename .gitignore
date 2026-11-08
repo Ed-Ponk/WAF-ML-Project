@@ -22,7 +22,6 @@ config/
 *.sql.bak
 *.sql.gz
 backups/
-tests/
 
 openspec/
 

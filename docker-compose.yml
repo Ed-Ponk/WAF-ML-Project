@@ -34,6 +34,32 @@ services:
       timeout: 5s
       retries: 5
 
+  # ── Migraciones one-shot (schema_migrations) ────────────────────
+  # Se ejecuta en cada `docker compose up`, aplica solo lo pendiente y termina.
+  # ml-engine y waf-dashboard esperan a que salga con código 0.
+  migrate:
+    image: postgres:15-alpine
+    container_name: waf-migrate
+    restart: "no"
+    logging: *default-logging
+    networks:
+      - waf-backend
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - PGHOST=database
+      - PGPORT=${DB_PORT:-5432}
+      - PGUSER=${DB_USER:?DB_USER no esta definida en .env}
+      - PGPASSWORD=${DB_PASSWORD:?DB_PASSWORD no esta definida en .env}
+      - PGDATABASE=${DB_NAME:?DB_NAME no esta definida en .env}
+      - MIGRATE_MODE=container
+      - MIGRATIONS_DIR=/database/migrations
+    volumes:
+      - ./scripts/apply-migrations.sh:/scripts/apply-migrations.sh:ro
+      - ./database/migrations:/database/migrations:ro
+    entrypoint: ["/bin/sh", "/scripts/apply-migrations.sh"]
+
   # Capa 2: Motor de Machine Learning
   ml-engine:
     build: ./ml-engine
@@ -54,6 +80,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT:-5432}/${DB_NAME}
       - THRESHOLD_BLOCK=${THRESHOLD_BLOCK:?THRESHOLD_BLOCK no esta definida en .env}
@@ -321,6 +349,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       ml-engine:
         condition: service_healthy
     environment:

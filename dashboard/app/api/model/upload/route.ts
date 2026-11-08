@@ -8,9 +8,8 @@ import { getJwtSecret } from "@/lib/jwt";
 import { getClientIp, logAuditEvent } from "@/lib/audit";
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
   try {
-    const ip = getClientIp(request);
-
     // 1. Authenticate and authorize admin role
     const cookieStore = cookies();
     let token = cookieStore.get("token")?.value;

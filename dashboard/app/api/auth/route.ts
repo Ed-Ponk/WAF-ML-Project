@@ -56,7 +56,7 @@ function recordFailedLogin(key: string, now: number): boolean {
   }
   if (now - lastSweep > SWEEP_INTERVAL_MS) {
     lastSweep = now;
-    for (const [k, e] of loginAttempts) {
+    for (const [k, e] of Array.from(loginAttempts.entries())) {
       if (now > e.lockedUntil &&
           (e.failTimes.length === 0 || now - e.failTimes[e.failTimes.length - 1] > FAILURE_WINDOW_MS)) {
         loginAttempts.delete(k);

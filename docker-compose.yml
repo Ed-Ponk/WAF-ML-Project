@@ -166,7 +166,7 @@ services:
   # carpetas del VPS. Documentar en el README o pasar a submódulos git.
   pyme-react-frontend:
     build:
-      context: ../../atel-upload/atel-front
+      context: ${ATEL_UPLOAD_DIR:-../../atel-upload}/atel-front
     container_name: pyme-react-frontend
     restart: unless-stopped
     logging: *default-logging
@@ -192,7 +192,7 @@ services:
   # credenciales. Ideal: base/rol dedicado con permisos limitados.
   maderera-app:
     build:
-      context: ../../atel-upload/projecto_landing
+      context: ${ATEL_UPLOAD_DIR:-../../atel-upload}/projecto_landing
     container_name: waf-maderera-app
     restart: unless-stopped
     logging: *default-logging
@@ -265,7 +265,7 @@ services:
 
   pyme-php-backend:
     build:
-      context: ../../atel-upload/atel-back
+      context: ${ATEL_UPLOAD_DIR:-../../atel-upload}/atel-back
     container_name: pyme-php-backend
     restart: unless-stopped
     logging: *default-logging

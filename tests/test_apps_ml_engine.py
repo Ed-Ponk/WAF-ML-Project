@@ -31,7 +31,6 @@ def test_app_registry_wiring_is_present():
         "follow_redirects=False",
         "trust_env=False",
         "IS_DEVELOPMENT",
-        "IS_PRODUCTION",
         "WAF_DOMAIN",
         "WAF_UNKNOWN_HOST_FALLBACK",
         "UnknownHostError",

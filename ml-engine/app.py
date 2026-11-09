@@ -125,7 +125,6 @@ BACKEND_ALLOWLIST = {
 # (X-Backend, X-App-Slug). Ausente o cualquier otro valor = producción.
 WAF_ENV = (os.getenv("WAF_ENV", "") or "").strip().lower()
 IS_DEVELOPMENT = WAF_ENV == "development"
-IS_PRODUCTION = not IS_DEVELOPMENT
 
 
 def _env_flag(name: str, default: bool = False) -> bool:

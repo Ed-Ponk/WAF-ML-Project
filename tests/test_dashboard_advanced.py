@@ -46,23 +46,25 @@ def test_telemetry_api_exists_and_queries_metrics():
     assert "query" in content, "Telemetry API must import/use the query helper"
 
 
-def test_confusion_matrix_api_reads_and_updates_baselines():
-    """Verify confusion matrix API reads (GET) baselines and updates (POST/PUT) values."""
+def test_confusion_matrix_api_reads_benchmark_baselines():
+    """Verify confusion matrix API is read-only and returns benchmark baselines."""
     assert CONFUSION_MATRIX_API.exists(), "Confusion Matrix API route.ts does not exist"
-    
+
     content = CONFUSION_MATRIX_API.read_text()
-    
-    # GET method queries waf_baselines and vw_confusion_matrix
+
+    # GET method reads live data and centralized benchmark baselines
     assert "GET" in content, "Confusion Matrix API must support GET"
-    assert "waf_baselines" in content or "vw_confusion_matrix" in content, "Confusion Matrix API must read baselines or confusion matrix"
-    
-    # POST/PUT updates metrics of a specific baseline
-    assert "POST" in content or "PUT" in content, "Confusion Matrix API must support POST or PUT updates"
-    assert "UPDATE" in content or "query" in content, "Confusion Matrix API must perform database updates"
-    assert "true_positives" in content, "Confusion Matrix API must handle true_positives"
-    assert "false_positives" in content, "Confusion Matrix API must handle false_positives"
-    assert "true_negatives" in content, "Confusion Matrix API must handle true_negatives"
-    assert "false_negatives" in content, "Confusion Matrix API must handle false_negatives"
+    assert "vw_confusion_matrix" in content, "Confusion Matrix API must read the live confusion matrix view"
+    assert "WAF_ML_BENCHMARK" in content, "Confusion Matrix API must return the WAF-ML benchmark"
+    assert "BASELINES" in content, "Confusion Matrix API must return the comparison baselines"
+    assert "BENCHMARK_DATE" in content, "Confusion Matrix API must expose the benchmark date"
+    assert "realtime" in content, "Confusion Matrix API must return realtime metrics"
+    assert "benchmark_date" in content, "Confusion Matrix API must return benchmark_date"
+
+    # Baselines are centralized constants; the route must not mutate them
+    assert re.search(r"export\s+async\s+function\s+(POST|PUT)", content) is None, (
+        "Confusion Matrix API must remain read-only; edit benchmark-baselines.ts instead"
+    )
 
 
 def test_model_upload_api_rbac_and_reload_logic():

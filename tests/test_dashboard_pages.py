@@ -62,8 +62,9 @@ def test_alerts_api_implements_pagination():
     assert "limit" in content.lower() and "offset" in content.lower(), (
         "Alerts API must apply LIMIT and OFFSET constraints to the SQL query"
     )
-    # Check for accion = 'BLOCK'
-    assert "BLOCK" in content, "Alerts API should query specifically for events with accion = 'BLOCK'"
+    # Action filtering is optional and parameterized; no hardcoded BLOCK-only query
+    assert "accion" in content.lower(), "Alerts API must support the accion filter"
+    assert "params.push" in content, "Alerts API must parameterize filter values"
 
 
 def test_ui_components_exist_with_client_directive():

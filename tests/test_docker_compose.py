@@ -84,7 +84,7 @@ def test_pyme_react_frontend_service_exists():
     svc = compose["services"]["pyme-react-frontend"]
 
     assert svc["container_name"] == "pyme-react-frontend"
-    assert svc["build"]["context"] == "../../thesis/app-pyme/atel-front"
+    assert svc["build"]["context"] == "${ATEL_UPLOAD_DIR:-../../atel-upload}/atel-front"
     assert svc.get("restart") == "unless-stopped"
     assert "pyme-security-net" in svc["networks"], (
         "Frontend must be on pyme-security-net"
@@ -96,8 +96,8 @@ def test_pyme_react_frontend_service_exists():
     )
 
     # Memory limit
-    assert svc["deploy"]["resources"]["limits"]["memory"] == "512M", (
-        "Frontend memory limit should be 512M"
+    assert svc["deploy"]["resources"]["limits"]["memory"] == "${PYME_FRONT_MEMORY_LIMIT:-512M}", (
+        "Frontend memory limit should default to 512M via PYME_FRONT_MEMORY_LIMIT"
     )
 
     # Environment (docker-compose list format)
@@ -114,7 +114,7 @@ def test_pyme_php_backend_service_exists():
     svc = compose["services"]["pyme-php-backend"]
 
     assert svc["container_name"] == "pyme-php-backend"
-    assert svc["build"]["context"] == "../../thesis/app-pyme/atel-back"
+    assert svc["build"]["context"] == "${ATEL_UPLOAD_DIR:-../../atel-upload}/atel-back"
     assert svc.get("restart") == "unless-stopped"
     assert "pyme-security-net" in svc["networks"], (
         "Backend must be on pyme-security-net"
@@ -126,27 +126,26 @@ def test_pyme_php_backend_service_exists():
     )
 
     # Memory limit
-    assert svc["deploy"]["resources"]["limits"]["memory"] == "256M", (
-        "Backend memory limit should be 256M"
+    assert svc["deploy"]["resources"]["limits"]["memory"] == "${PYME_PHP_MEMORY_LIMIT:-256M}", (
+        "Backend memory limit should default to 256M via PYME_PHP_MEMORY_LIMIT"
     )
 
-    # Environment should reference database hostname from compose
+    # Environment should reference the MySQL service and parameterized credentials
     env = _env_to_dict(svc["environment"])
-    db_url = env.get("DATABASE_URL", "")
-    assert "database" in db_url, (
-        "Backend DATABASE_URL must reference the 'database' hostname"
+    assert env.get("DB_HOST") == "${DB_MYSQL_HOST:-mysql}", (
+        "Backend DB_HOST must default to the 'mysql' service"
     )
-    assert "${DB_USER}" in db_url
-    assert "${DB_PASSWORD}" in db_url
-    assert "${DB_PORT}" in db_url
-    assert "${DB_NAME}" in db_url
+    assert env.get("DB_PORT") == "${DB_MYSQL_PORT:-3306}"
+    assert env.get("DB_DATABASE") == "${DB_MYSQL_DATABASE:-bd_atel}"
+    assert "${DB_MYSQL_USERNAME" in env.get("DB_USERNAME", "")
+    assert "${DB_MYSQL_PASSWORD" in env.get("DB_PASSWORD", "")
 
 
 # ── WAF Admin Dashboard — Phase 1 & 2 TDD Tests ──────────────────────
 
 
 def test_database_init_sql_has_required_tables():
-    """Phase 1: init.sql must define waf_users, waf_hardware_metrics, and waf_baselines with initial seeds."""
+    """Phase 1: init.sql must define dashboard tables without hardcoded admin credentials."""
     sql_path = Path(__file__).parent.parent / "database" / "init.sql"
     sql_content = sql_path.read_text().lower()
 
@@ -158,11 +157,13 @@ def test_database_init_sql_has_required_tables():
     assert "password_hash" in sql_content and "varchar" in sql_content, "waf_users table missing password_hash varchar column"
     assert "role" in sql_content and "varchar" in sql_content, "waf_users table missing role varchar column"
 
-    # Check for admin seed in waf_users
-    assert "insert into waf_users" in sql_content or "insert into waf_users_data" in sql_content, (
-        "database/init.sql missing admin user insertion"
+    # The admin is created at first boot with random credentials, never seeded in SQL
+    assert "insert into waf_users" not in sql_content, (
+        "database/init.sql must not seed users; use scripts/bootstrap-admin.sh"
     )
-    assert "'admin'" in sql_content, "database/init.sql missing seed of 'admin'"
+    assert "bootstrap-admin.sh" in sql_content, (
+        "database/init.sql must document the bootstrap-admin.sh flow"
+    )
 
     # Check for waf_hardware_metrics table
     assert "create table if not exists waf_hardware_metrics" in sql_content, (
@@ -192,8 +193,8 @@ def test_database_init_sql_has_required_tables():
 
 
 def test_nginx_conf_has_dashboard_routing():
-    """Phase 2: nginx/default.conf must route /dashboard with auth_request off and WebSocket upgrades."""
-    nginx_path = Path(__file__).parent.parent / "nginx" / "default.conf"
+    """Phase 2: nginx template must route /dashboard with auth_request off and WebSocket upgrades."""
+    nginx_path = Path(__file__).parent.parent / "nginx" / "default.conf.template"
     nginx_content = nginx_path.read_text()
 
     # We expect location /dashboard blocks
@@ -204,22 +205,24 @@ def test_nginx_conf_has_dashboard_routing():
     )
 
     # Verify key configurations in location /dashboard
-    # Let's search for "auth_request off" inside Nginx config
     assert "auth_request off;" in nginx_content, (
-        "nginx/default.conf must bypass validation with auth_request off; for /dashboard"
+        "nginx/default.conf.template must bypass validation with auth_request off; for /dashboard"
     )
 
     # Verify WS header upgrades
     assert "proxy_set_header Upgrade" in nginx_content, (
-        "nginx/default.conf must proxy Upgrade header for WebSocket fast-refresh"
+        "nginx/default.conf.template must proxy Upgrade header for WebSocket fast-refresh"
     )
     assert "proxy_set_header Connection" in nginx_content, (
-        "nginx/default.conf must proxy Connection header for WebSocket upgrades"
+        "nginx/default.conf.template must proxy Connection header for WebSocket upgrades"
     )
 
-    # Verify proxy_pass to waf-dashboard
-    assert "proxy_pass http://waf-dashboard:3000" in nginx_content, (
-        "nginx/default.conf must proxy_pass to http://waf-dashboard:3000"
+    # Verify proxy_pass to the dashboard upstream
+    assert "set $dashboard_upstream waf-dashboard:3000;" in nginx_content, (
+        "nginx/default.conf.template must define the waf-dashboard upstream"
+    )
+    assert "proxy_pass http://$dashboard_upstream;" in nginx_content, (
+        "nginx/default.conf.template must proxy_pass to the dashboard upstream"
     )
 
 

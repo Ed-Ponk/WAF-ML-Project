@@ -24,6 +24,7 @@ export interface AuthUser {
 export interface AuthResult {
   ok: true;
   user: AuthUser;
+  token: string;
   response?: never;
 }
 
@@ -115,5 +116,5 @@ export async function authenticate(
     };
   }
 
-  return { ok: true, user: decoded as AuthUser };
+  return { ok: true, user: decoded as AuthUser, token };
 }

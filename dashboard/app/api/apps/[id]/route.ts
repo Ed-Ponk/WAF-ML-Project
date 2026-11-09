@@ -8,6 +8,7 @@ import {
   validateDisableAllowed,
   validateSlugUpdate,
 } from "@/lib/apps";
+import { reloadAppsCache } from "@/lib/ml-engine";
 
 const SCHEMA_ERROR =
   "Falta aplicar migraciones (waf_apps / waf_app_domains). Ejecutá ./scripts/apply-migrations.sh";
@@ -233,6 +234,16 @@ export async function PATCH(
           enabled: Boolean(app.enabled),
         },
       });
+
+      const reload = await reloadAppsCache(auth.token);
+      if (!reload.ok) {
+        console.error("reload_apps failed after app.update:", reload.status, reload.error);
+        await logAuditEvent("app.reload", "failure", {
+          user: actor,
+          ip,
+          details: { app_id: app.id, status: reload.status, error: reload.error },
+        });
+      }
 
       return NextResponse.json({
         app: { ...app, enabled: Boolean(app.enabled), domains: nextDomains },

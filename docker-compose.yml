@@ -90,6 +90,9 @@ services:
       # 0=fast path activado (tráfico GET limpio saltea inferencia ML)
       # 1=desactivado (cada request pasa por el ensemble - solo para benchmark)
       - WAF_BENCHMARK_MODE=0
+      - WAF_ENV=${WAF_ENV:-production}
+      - WAF_DOMAIN=${WAF_DOMAIN:-localhost}
+      - WAF_UNKNOWN_HOST_FALLBACK=${WAF_UNKNOWN_HOST_FALLBACK:-false}
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no esta definida en .env}
       - BACKEND_ALLOWLIST=${BACKEND_ALLOWLIST:-http://pyme-php-backend:80,http://maderera-app:3000}
     deploy:

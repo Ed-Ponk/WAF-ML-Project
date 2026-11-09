@@ -16,6 +16,9 @@ services:
       - THRESHOLD_LOG=${THRESHOLD_LOG:-0.3}
       - WAF_DEBUG=${WAF_DEBUG:-false}
       - WAF_BENCHMARK_MODE=0
+      - WAF_ENV=development
+      - WAF_DOMAIN=localhost
+      - WAF_UNKNOWN_HOST_FALLBACK=false
       - JWT_SECRET=${JWT_SECRET}
       - BACKEND_ALLOWLIST=http://pyme-php-backend-test:80
       - APPS_CACHE_TTL=30

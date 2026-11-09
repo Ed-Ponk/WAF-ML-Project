@@ -1,10 +1,12 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 import os, sys, time, json, base64, hashlib, hmac
+import socket, ipaddress
+from dataclasses import dataclass
 import pandas as pd
 import asyncpg, asyncio
 import threading
 import psutil
-from urllib.parse import unquote, parse_qs
+from urllib.parse import unquote, parse_qs, urlsplit
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, Response
 from starlette.datastructures import Headers
@@ -118,6 +120,251 @@ BACKEND_ALLOWLIST = {
     for url in os.getenv("BACKEND_ALLOWLIST", "").split(",")
     if url.strip()
 }
+
+# Entorno: sólo WAF_ENV="development" explícito habilita compatibilidad legacy
+# (X-Backend, X-App-Slug). Ausente o cualquier otro valor = producción.
+WAF_ENV = (os.getenv("WAF_ENV", "") or "").strip().lower()
+IS_DEVELOPMENT = WAF_ENV == "development"
+IS_PRODUCTION = not IS_DEVELOPMENT
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    value = (os.getenv(name, "") or "").strip().lower()
+    if not value:
+        return default
+    return value in ("1", "true", "yes", "on")
+
+
+UNKNOWN_HOST_FALLBACK = _env_flag("WAF_UNKNOWN_HOST_FALLBACK", False)
+
+# Hostnames internos del stack que nunca pueden ser backend de una app.
+INTERNAL_HOST_DENYLIST = {
+    "localhost",
+    "database",
+    "ml-engine",
+    "waf-dashboard",
+    "mysql",
+    "vpn",
+    "proxy",
+    "certbot",
+    "waf-db",
+    "waf-ml-engine",
+    "waf-pyme-db",
+    "waf-vpn",
+    "waf-proxy",
+    "host.docker.internal",
+    "gateway.docker.internal",
+    "metadata.google.internal",
+}
+
+
+class UnsafeBackendError(ValueError):
+    """backend_url inválida o apunta a una dirección prohibida."""
+
+
+class DisabledAppError(RuntimeError):
+    """La app resuelta por Host está deshabilitada."""
+
+    def __init__(self, app: Dict[str, Any]):
+        self.app = app
+        super().__init__(f"app deshabilitada: {app.get('slug')}")
+
+
+class UnknownHostError(RuntimeError):
+    """Host no registrado y sin fallback configurado (responde 421)."""
+
+    def __init__(self, host: str):
+        self.host = host
+        super().__init__(f"host desconocido: {host!r}")
+
+
+class NoDefaultAppError(RuntimeError):
+    """No hay ninguna app habilitada para usar como default (responde 503)."""
+
+
+@dataclass(frozen=True)
+class BackendTarget:
+    scheme: str
+    host: str
+    port: int
+    path: str
+
+    def to_url(self) -> str:
+        host = f"[{self.host}]" if ":" in self.host else self.host
+        return f"{self.scheme}://{host}:{self.port}{self.path}"
+
+
+@dataclass(frozen=True)
+class PinnedBackend:
+    url: str
+    sni_hostname: Optional[str]
+
+
+def _parse_ip_literal(host: str):
+    try:
+        return ipaddress.ip_address(host)
+    except ValueError:
+        return None
+
+
+def _is_blocked_ip(ip) -> bool:
+    """Bloquea loopback, link-local, unspecified y multicast.
+
+    Los rangos privados (RFC1918 / redes Docker) SÍ se permiten: los
+    backends de las apps protegidas viven en esas redes.
+    """
+    return (
+        ip.is_loopback
+        or ip.is_link_local
+        or ip.is_unspecified
+        or ip.is_multicast
+    )
+
+
+def parse_backend_url(raw: Any) -> BackendTarget:
+    """Valida y normaliza un backend_url.
+
+    Rechaza esquemas no HTTP(S), credenciales, query string, fragmento,
+    hosts internos del stack y literales loopback/link-local/unspecified/
+    multicast. Permite hostnames y rangos privados.
+    """
+    value = str(raw or "").strip().rstrip("/")
+    if not value:
+        raise UnsafeBackendError("backend_url vacía")
+
+    try:
+        parts = urlsplit(value)
+        port = parts.port
+    except ValueError as exc:
+        raise UnsafeBackendError(f"backend_url inválida: {exc}") from exc
+
+    if parts.scheme not in ("http", "https"):
+        raise UnsafeBackendError("backend_url sólo admite http:// o https://")
+    if parts.username or parts.password:
+        raise UnsafeBackendError("backend_url no puede incluir credenciales")
+    if parts.query or parts.fragment:
+        raise UnsafeBackendError("backend_url no puede incluir query string ni fragmento")
+
+    host = (parts.hostname or "").strip().lower().rstrip(".")
+    if not host:
+        raise UnsafeBackendError("backend_url sin host")
+    if host in INTERNAL_HOST_DENYLIST:
+        raise UnsafeBackendError(f"backend_url apunta a un servicio interno: {host}")
+
+    literal = _parse_ip_literal(host)
+    if literal is not None and _is_blocked_ip(literal):
+        raise UnsafeBackendError(
+            "backend_url apunta a loopback, link-local, unspecified o multicast"
+        )
+
+    if port is None:
+        port = 443 if parts.scheme == "https" else 80
+    if not (1 <= port <= 65535):
+        raise UnsafeBackendError("backend_url con puerto inválido")
+
+    path = parts.path.rstrip("/")
+    if path and not path.startswith("/"):
+        path = "/" + path
+
+    return BackendTarget(scheme=parts.scheme, host=host, port=port, path=path)
+
+
+def normalize_host(raw: Any) -> str:
+    """Normaliza un header Host: minúsculas, sin puerto y sin punto final."""
+    value = str(raw or "").strip().lower()
+    if not value:
+        return ""
+    if value.startswith("["):
+        end = value.find("]")
+        if end != -1:
+            value = value[1:end]
+        else:
+            value = value.lstrip("[")
+    elif value.count(":") == 1:
+        value = value.split(":", 1)[0]
+    return value.rstrip(".")
+
+
+# Host explícito que puede caer al default aunque no esté en el registro.
+WAF_DOMAIN = normalize_host(os.getenv("WAF_DOMAIN", ""))
+
+
+def normalize_cache_domain(raw: Any) -> Optional[str]:
+    """Normaliza un dominio de waf_app_domains; None si es inválido."""
+    value = str(raw or "").strip().lower()
+    if not value:
+        return None
+    if "://" in value or "/" in value or ":" in value or " " in value:
+        return None
+    value = value.rstrip(".")
+    if not value or value in INTERNAL_HOST_DENYLIST:
+        return None
+    for label in value.split("."):
+        if not label or len(label) > 63:
+            return None
+        if label[0] == "-" or label[-1] == "-":
+            return None
+        if not all(c.isalnum() or c == "-" for c in label):
+            return None
+    return value
+
+
+def resolve_backend_connection(
+    backend_url: str,
+    path_name: str,
+    query: str = "",
+) -> PinnedBackend:
+    """Resuelve el backend y fija la IP de conexión (anti DNS rebinding).
+
+    Se resuelve DNS en cada request. Si CUALQUIER dirección resuelta es
+    loopback/link-local/unspecified/multicast se rechaza; si no, se fija la
+    primera dirección y se arma la URL con esa IP para que httpx no vuelva a
+    resolver el hostname.
+    """
+    target = parse_backend_url(backend_url)
+
+    try:
+        infos = socket.getaddrinfo(
+            target.host,
+            target.port,
+            type=socket.SOCK_STREAM,
+        )
+    except socket.gaierror as exc:
+        raise UnsafeBackendError(f"no se pudo resolver {target.host}: {exc}") from exc
+
+    if not infos:
+        raise UnsafeBackendError(f"sin direcciones para {target.host}")
+
+    pinned_ip: Optional[str] = None
+    for info in infos:
+        sockaddr = info[4]
+        if not sockaddr:
+            continue
+        candidate = str(sockaddr[0])
+        ip = _parse_ip_literal(candidate)
+        if ip is None or _is_blocked_ip(ip):
+            raise UnsafeBackendError(
+                f"{target.host} resuelve a una dirección prohibida: {candidate}"
+            )
+        if pinned_ip is None:
+            pinned_ip = candidate
+
+    if pinned_ip is None:
+        raise UnsafeBackendError(f"sin direcciones válidas para {target.host}")
+
+    path = target.path
+    if path_name:
+        path = f"{path}/{path_name.lstrip('/')}"
+    elif not path:
+        path = "/"
+
+    host_for_url = f"[{pinned_ip}]" if ":" in pinned_ip else pinned_ip
+    url = f"{target.scheme}://{host_for_url}:{target.port}{path}"
+    if query:
+        url += f"?{query}"
+
+    sni_hostname = target.host if target.scheme == "https" else None
+    return PinnedBackend(url=url, sni_hostname=sni_hostname)
 
 
 def _get_jwt_secret() -> str:
@@ -246,6 +493,34 @@ async def reload_model(request: Request):
         print(f"❌ Error reloading model: {err_msg}")
         raise HTTPException(status_code=400, detail=f"Failed to reload model: {err_msg}")
 
+
+@app.post("/reload_apps")
+async def reload_apps(request: Request):
+    """Recarga la caché de apps/dominios desde la DB (admin JWT)."""
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized: missing Bearer token")
+
+    reason = verify_admin_jwt(auth[len("Bearer "):].strip())
+    if reason == "forbidden_role":
+        raise HTTPException(status_code=403, detail="Forbidden: Admin role required")
+    if reason != "ok":
+        raise HTTPException(status_code=401, detail=f"Unauthorized: {reason}")
+
+    if not db_pool:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+
+    ok = await load_apps_cache(force=True)
+    if not ok:
+        raise HTTPException(status_code=503, detail="Failed to reload apps cache")
+
+    return {
+        "status": "success",
+        "apps": len(apps_cache),
+        "domains": len(apps_by_domain),
+        "default_app_id": default_app_id,
+    }
+
 # ══════════════════════════════════════════════════════════════════
 # 2. EXTRACCIÓN DE CARACTERÍSTICAS (Copia estática local)
 # ══════════════════════════════════════════════════════════════════
@@ -322,11 +597,94 @@ _hw_task = None
 # ══════════════════════════════════════════════════════════════════
 apps_cache: Dict[str, Dict[str, Any]] = {}  # key = app_id (uuid string)
 apps_by_slug: Dict[str, Dict[str, Any]] = {}  # key = slug
+apps_by_domain: Dict[str, Dict[str, Any]] = {}  # key = dominio normalizado
 default_app_id: Optional[str] = None
 default_app_slug: str = os.environ.get("DEFAULT_APP_SLUG", "default")
 _apps_cache_last_refresh = 0.0
 _APPS_CACHE_TTL = float(os.environ.get("APPS_CACHE_TTL", "30"))
 DEFAULT_APP_SLUG = default_app_slug
+
+
+def _row_get(row: Any, key: str, default: Any = None) -> Any:
+    try:
+        return row[key]
+    except (KeyError, IndexError, TypeError):
+        return default
+
+
+def _build_apps_cache(app_rows, domain_rows) -> Dict[str, Any]:
+    """Construye la caché de apps a partir de filas de DB.
+
+    Revalida backend_url y descarta (con log) las filas inválidas sin
+    tumbar el engine. Función pura: no toca globals.
+    """
+    apps: Dict[str, Dict[str, Any]] = {}
+    by_slug: Dict[str, Dict[str, Any]] = {}
+    by_domain: Dict[str, Dict[str, Any]] = {}
+    default_id: Optional[str] = None
+
+    for row in app_rows:
+        app_id = str(_row_get(row, "id", "") or "")
+        slug = str(_row_get(row, "slug", "") or "").strip().lower()
+        if not app_id or not slug:
+            print(f"⚠️ apps_cache: fila sin id/slug descartada: {row!r}")
+            continue
+        try:
+            target = parse_backend_url(_row_get(row, "backend_url"))
+        except UnsafeBackendError as exc:
+            print(f"⚠️ apps_cache: app '{slug}' descartada: {exc}")
+            continue
+
+        legacy_domain = normalize_cache_domain(_row_get(row, "domain"))
+        app_info = {
+            "id": app_id,
+            "slug": slug,
+            "domain": legacy_domain,
+            "domains": [legacy_domain] if legacy_domain else [],
+            "backend_url": target.to_url(),
+            "enabled": bool(_row_get(row, "enabled", False)),
+        }
+        apps[app_id] = app_info
+        by_slug[slug] = app_info
+        if legacy_domain and legacy_domain not in by_domain:
+            by_domain[legacy_domain] = app_info
+
+    for row in domain_rows:
+        app_id = str(_row_get(row, "app_id", "") or "")
+        app_info = apps.get(app_id)
+        if not app_info:
+            continue
+        domain = normalize_cache_domain(_row_get(row, "domain"))
+        if not domain:
+            print(f"⚠️ apps_cache: dominio inválido descartado para app '{app_info['slug']}'")
+            continue
+        existing = by_domain.get(domain)
+        if existing and existing["id"] != app_id:
+            print(
+                f"⚠️ apps_cache: dominio '{domain}' ya asignado a "
+                f"'{existing['slug']}'; se ignora para '{app_info['slug']}'"
+            )
+            continue
+        by_domain[domain] = app_info
+        if domain not in app_info["domains"]:
+            app_info["domains"].append(domain)
+
+    default_app = by_slug.get(DEFAULT_APP_SLUG)
+    if default_app and default_app["enabled"]:
+        default_id = default_app["id"]
+    else:
+        for slug in sorted(by_slug):
+            candidate = by_slug[slug]
+            if candidate["enabled"]:
+                default_id = candidate["id"]
+                break
+
+    return {
+        "apps": apps,
+        "by_slug": by_slug,
+        "by_domain": by_domain,
+        "default_app_id": default_id,
+    }
 
 
 async def _read_cpu_pct() -> float:
@@ -420,48 +778,62 @@ def _should_use_fast_path(original_method: str, f_dict: dict) -> bool:
 
 
 
-async def load_apps_cache(force: bool = False) -> None:
-    global apps_cache, apps_by_slug, default_app_id, _apps_cache_last_refresh
+async def load_apps_cache(force: bool = False) -> bool:
+    global apps_cache, apps_by_slug, apps_by_domain, default_app_id, _apps_cache_last_refresh
     if not db_pool:
-        return
+        return False
     now = time.time()
     if not force and _apps_cache_last_refresh and (now - _apps_cache_last_refresh) < _APPS_CACHE_TTL:
-        return
+        return True
     try:
         async with db_pool.acquire() as conn:
-            rows = await conn.fetch(
+            app_rows = await conn.fetch(
                 "SELECT id::text AS id, slug, domain, backend_url, enabled FROM waf_apps"
             )
-        new_cache: Dict[str, Dict[str, Any]] = {}
-        new_by_slug: Dict[str, Dict[str, Any]] = {}
-        new_default = None
-        for r in rows:
-            app_info = {
-                "id": r["id"],
-                "slug": r["slug"],
-                "domain": r["domain"],
-                "backend_url": r["backend_url"],
-                "enabled": bool(r["enabled"]),
-            }
-            new_cache[r["id"]] = app_info
-            new_by_slug[r["slug"]] = app_info
-            if r["slug"] == DEFAULT_APP_SLUG and r["enabled"]:
-                new_default = r["id"]
+            try:
+                domain_rows = await conn.fetch(
+                    "SELECT app_id::text AS app_id, domain FROM waf_app_domains"
+                )
+            except Exception as domain_err:
+                print(
+                    f"⚠️ apps_cache: waf_app_domains no disponible ({domain_err}); "
+                    "se usa sólo waf_apps.domain"
+                )
+                domain_rows = []
+
+        built = _build_apps_cache(app_rows, domain_rows)
+        # No reemplazar una caché válida por una vacía o sin default: si la DB
+        # quedó mal, se conserva la última buena y /reload_apps devuelve 503.
+        if not built["apps"] or not built["default_app_id"]:
+            if apps_cache and default_app_id:
+                print(
+                    "⚠️ apps_cache: nueva caché vacía o sin app default; "
+                    "se conserva la última caché válida"
+                )
+            else:
+                print(
+                    "⚠️ apps_cache: sin apps o sin app default habilitada; "
+                    "los requests responderán 503 hasta corregir la DB"
+                )
+            return False
         # Reemplazar dicts completos (sin mutación in-place)
-        apps_cache = new_cache
-        apps_by_slug = new_by_slug
-        if new_default:
-            default_app_id = new_default
-        elif default_app_id is None and apps_cache:
-            print(f"⚠️ No se encontró app '{DEFAULT_APP_SLUG}' habilitada en waf_apps")
+        apps_cache = built["apps"]
+        apps_by_slug = built["by_slug"]
+        apps_by_domain = built["by_domain"]
+        default_app_id = built["default_app_id"]
         _apps_cache_last_refresh = time.time()
         if default_app_id:
-            print(f"✅ apps_cache cargado: {len(apps_cache)} apps, default_app_id={default_app_id}")
+            print(
+                f"✅ apps_cache cargado: {len(apps_cache)} apps, "
+                f"{len(apps_by_domain)} dominios, default_app_id={default_app_id}"
+            )
         else:
-            print(f"✅ apps_cache cargado: {len(apps_cache)} apps, default_app_id=None")
+            print(f"✅ apps_cache cargado: {len(apps_cache)} apps, sin app default habilitada")
+        return True
     except Exception as e:
         print(f"⚠️ Error cargando apps_cache: {e}")
         # Mantener cache anterior si falla
+        return False
 
 async def refresh_apps_cache_loop() -> None:
     while True:
@@ -474,33 +846,78 @@ async def refresh_apps_cache_loop() -> None:
             print(f"⚠️ Error en refresh_apps_cache_loop: {e}")
             await asyncio.sleep(5)
 
-def get_resolved_app_id_from_header(x_app_slug: Optional[str]) -> str:
-    global default_app_id
-    slug = None
-    if x_app_slug:
-        slug = str(x_app_slug).strip()
-    if slug and slug in apps_by_slug:
-        app = apps_by_slug[slug]
-        if app.get("enabled"):
-            return app["id"]
-        else:
-            print(f"⚠️ X-App-Slug deshabilitada (header={slug}). Usando app default {default_app_id}")
-    elif slug:
-        print(f"⚠️ X-App-Slug inválido o desconocido (header={slug}). Usando app default {default_app_id}")
-    else:
-        print(f"⚠️ X-App-Slug vacío o ausente. Usando app default {default_app_id}")
-    if default_app_id and default_app_id in apps_cache and apps_cache[default_app_id].get("enabled"):
-        return default_app_id
-    # Intentar por slug default
-    if DEFAULT_APP_SLUG in apps_by_slug and apps_by_slug[DEFAULT_APP_SLUG].get("enabled"):
-        default_app_id = apps_by_slug[DEFAULT_APP_SLUG]["id"]
-        return default_app_id
-    # Último recurso
-    for aid, app in apps_cache.items():
-        if app.get("enabled"):
-            print(f"⚠️ Usando primera app habilitada como fallback: {aid}")
-            return aid
-    raise RuntimeError("No hay app default disponible y cache vacío")
+def lookup_app_by_host(host: str) -> Tuple[Optional[Dict[str, Any]], str]:
+    """Devuelve (app, estado) con estado ok|disabled|unknown."""
+    normalized = normalize_host(host)
+    if not normalized:
+        return None, "unknown"
+    app = apps_by_domain.get(normalized)
+    if not app:
+        return None, "unknown"
+    if not app.get("enabled"):
+        return app, "disabled"
+    return app, "ok"
+
+
+def resolve_app_by_host(host: str) -> Optional[Dict[str, Any]]:
+    """Devuelve sólo apps habilitadas mapeadas por dominio."""
+    app, status = lookup_app_by_host(host)
+    return app if status == "ok" else None
+
+
+def _default_enabled_app() -> Dict[str, Any]:
+    """Devuelve la app default habilitada o levanta NoDefaultAppError."""
+    if default_app_id and default_app_id in apps_cache:
+        candidate = apps_cache[default_app_id]
+        if candidate.get("enabled"):
+            return candidate
+    for candidate in apps_cache.values():
+        if candidate.get("enabled"):
+            return candidate
+    raise NoDefaultAppError("no hay app default habilitada")
+
+
+def resolve_request_app(
+    host: str,
+    compat_slug: Optional[str] = None,
+    allow_compat: Optional[bool] = None,
+) -> Dict[str, Any]:
+    """Resuelve la app de un request.
+
+    Orden: Host registrado -> (sólo development) X-App-Slug -> WAF_DOMAIN
+    -> fallback explícito. Una app deshabilitada levanta DisabledAppError
+    (403); un Host desconocido levanta UnknownHostError (421) salvo que sea
+    WAF_DOMAIN o que WAF_UNKNOWN_HOST_FALLBACK esté activo.
+    """
+    if allow_compat is None:
+        allow_compat = IS_DEVELOPMENT
+
+    normalized = normalize_host(host)
+    app, status = lookup_app_by_host(normalized)
+    if status == "ok":
+        return app
+    if status == "disabled":
+        raise DisabledAppError(app)
+
+    if allow_compat and compat_slug:
+        slug = str(compat_slug).strip().lower()
+        candidate = apps_by_slug.get(slug)
+        if candidate:
+            if candidate.get("enabled"):
+                return candidate
+            raise DisabledAppError(candidate)
+
+    if normalized and WAF_DOMAIN and normalized == WAF_DOMAIN:
+        return _default_enabled_app()
+
+    if UNKNOWN_HOST_FALLBACK:
+        print(
+            f"⚠️ Host desconocido {normalized!r}: "
+            "WAF_UNKNOWN_HOST_FALLBACK activo, usando app default"
+        )
+        return _default_enabled_app()
+
+    raise UnknownHostError(normalized)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -513,15 +930,44 @@ async def waf_core(request: Request, path_name: str):
     
     original_url = request.headers.get("x-original-uri", "")
     original_method = request.headers.get("x-original-method", request.method)
-    # Resolver app_id desde header X-App-Slug (inyectado por Nginx). NO confiar en Host.
-    app_header = request.headers.get("x-app-slug") or request.headers.get("X-App-Slug") or request.headers.get("x-app-id") or request.headers.get("X-App-Id")
+
+    # Resolver app por Host (dominio registrado en waf_apps/waf_app_domains).
+    # X-Forwarded-Host NO se usa: sólo el Host real del request. En desarrollo
+    # se acepta X-App-Slug como compatibilidad; en producción sólo vale Host.
+    request_host = request.headers.get("host", "")
+    compat_slug = request.headers.get("x-app-slug") or request.headers.get("x-app-id")
     try:
-        app_id_resolved = get_resolved_app_id_from_header(app_header)
-    except Exception as e:
-        print(f"⚠️ Error resolviendo app_id: {e}. Usando default si existe")
-        app_id_resolved = default_app_id if default_app_id else None
-        if not app_id_resolved:
-            raise
+        resolved_app = resolve_request_app(request_host, compat_slug)
+    except DisabledAppError as disabled:
+        print(f"⛔ App deshabilitada para host={request_host!r}: {disabled.app.get('slug')}")
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "App disabled"},
+            headers={"X-WAF-Action": "BLOCK", "X-WAF-Score": "0.0"},
+        )
+    except UnknownHostError as unknown:
+        print(f"⛔ Host desconocido: {unknown.host!r}")
+        return JSONResponse(
+            status_code=421,
+            content={"detail": "Misdirected Request: unknown host"},
+            headers={"X-WAF-Action": "BLOCK", "X-WAF-Score": "0.0"},
+        )
+    except NoDefaultAppError as no_default:
+        print(f"⛔ Sin app default habilitada: {no_default}")
+        return JSONResponse(
+            status_code=503,
+            content={"detail": "App registry unavailable"},
+            headers={"X-WAF-Action": "BLOCK", "X-WAF-Score": "0.0"},
+        )
+    except Exception as app_err:
+        print(f"⛔ Error resolviendo app: {app_err}")
+        return JSONResponse(
+            status_code=503,
+            content={"detail": "App registry unavailable"},
+            headers={"X-WAF-Action": "BLOCK", "X-WAF-Score": "0.0"},
+        )
+
+    app_id_resolved = resolved_app["id"]
 
     # Fallback si no viene el header (benchmark directo sin nginx)
     if not original_url:
@@ -639,26 +1085,42 @@ async def waf_core(request: Request, path_name: str):
         )
 
     # ── Proxy al backend ──────────────────────────────────────────
-    # Si es ALLOW o LOG, reenviar la request al backend real
-    backend_url = _normalize_backend(request.headers.get("X-Backend", DEFAULT_BACKEND))
-
-    # Whitelist de backends: cualquier X-Backend/DEFAULT_BACKEND fuera de la
-    # lista se rechaza sin siquiera intentar el reenvío (anti-SSRF vía header).
-    if backend_url and backend_url not in BACKEND_ALLOWLIST:
-        print(f"⚠️ X-Backend rechazado por allowlist: {backend_url}")
-        return JSONResponse(
-            status_code=403,
-            content={"detail": "Forbidden backend"},
-            headers={"X-WAF-Action": action, "X-WAF-Score": str(round(float(score), 4))},
-        )
+    # Si es ALLOW o LOG, reenviar la request al backend real.
+    # Sólo se proxya al backend_url exacto de la app resuelta. En producción
+    # X-Backend se ignora; en desarrollo queda como compatibilidad legacy.
+    backend_url = None
+    if resolved_app is not None:
+        backend_url = resolved_app["backend_url"]
+    elif IS_DEVELOPMENT:
+        legacy_backend = _normalize_backend(request.headers.get("X-Backend", DEFAULT_BACKEND))
+        if legacy_backend:
+            if legacy_backend not in BACKEND_ALLOWLIST:
+                print(f"⚠️ X-Backend rechazado por allowlist: {legacy_backend}")
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "Forbidden backend"},
+                    headers={"X-WAF-Action": action, "X-WAF-Score": str(round(float(score), 4))},
+                )
+            backend_url = legacy_backend
 
     if backend_url:
         try:
-            # Reconstruir la URL completa del backend
-            target_url = backend_url.rstrip("/") + "/" + path_name.lstrip("/")
-            if request.url.query:
-                target_url += "?" + request.url.query
+            # Resolver DNS en cada request y fijar la IP (anti DNS rebinding).
+            pinned = await asyncio.to_thread(
+                resolve_backend_connection,
+                backend_url,
+                path_name,
+                request.url.query,
+            )
+        except UnsafeBackendError as unsafe_err:
+            print(f"⚠️ Backend rechazado en conexión: {unsafe_err}")
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "Forbidden backend"},
+                headers={"X-WAF-Action": action, "X-WAF-Score": str(round(float(score), 4))},
+            )
 
+        try:
             # Headers a reenviar (sin los de nginx/ml-engine internos)
             forward_headers = {}
             for k, v in request.headers.items():
@@ -671,13 +1133,18 @@ async def waf_core(request: Request, path_name: str):
             # Leer body crudo (ya lo tenemos en payload, pero mejor leer directo)
             body_bytes = await request.body()
 
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            request_extensions = {}
+            if pinned.sni_hostname:
+                request_extensions["sni_hostname"] = pinned.sni_hostname
+
+            async with httpx.AsyncClient(timeout=30.0, trust_env=False) as client:
                 backend_resp = await client.request(
                     method=request.method,
-                    url=target_url,
+                    url=pinned.url,
                     headers=forward_headers,
                     content=body_bytes,
                     follow_redirects=False,
+                    extensions=request_extensions or None,
                 )
 
             # Preservar headers duplicados (Set-Cookie) y quitar hop-by-hop

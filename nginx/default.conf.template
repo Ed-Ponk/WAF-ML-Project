@@ -14,22 +14,39 @@
 # Flujo TLS (MitM legítimo):
 #   Cliente → HTTPS :443 → Nginx descifra → HTTP plano → Backend
 # ══════════════════════════════════════════════════════════════════
-# Mapeo dominio → app_slug / backend (MVP estático, sin UUIDs hardcodeados)
-# ══════════════════════════════════════════════════════════════════
-map $host $resolved_app_slug {
-    default        "default";
-    ${PYME_DOMAIN} "default";
-    ${WAF_DOMAIN}  "default";
-    ${MADERERA_DOMAIN} "default";
-}
-
+# El mapeo dominio → app/backend lo resuelve ml-engine a partir de
+# waf_apps y waf_app_domains. Nginx sólo reenvía el Host original.
 resolver 127.0.0.11 valid=30s ipv6=off;
 
-map $host $resolved_backend {
-    default        http://pyme-php-backend:80;
-    ${PYME_DOMAIN} http://pyme-php-backend:80;
-    ${WAF_DOMAIN}  http://pyme-php-backend:80;
-    ${MADERERA_DOMAIN} http://maderera-app:3000;
+# ── Default server HTTP: fail-closed para Host desconocido ──────
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location = /nginx-health {
+        access_log off;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 444;
+    }
+}
+
+# ── Default server HTTPS: rechaza handshake sin SNI conocido ────
+server {
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    server_name _;
+
+    ssl_certificate     ${CERT_PATH};
+    ssl_certificate_key ${KEY_PATH};
+    ssl_reject_handshake on;
 }
 
 # ══════════════════════════════════════════════════════════════════
@@ -45,9 +62,6 @@ server {
     proxy_read_timeout    30s;
     proxy_send_timeout    30s;
 
-    # ── Error catchment (server-level) ────────────────────────
-    error_page 500 502 503 504 =200 /pyme/pyme_index.html;
-
     # ── Let's Encrypt HTTP-01 (webroot compartido con certbot) ─
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -59,6 +73,9 @@ server {
     location / {
         set $frontend_upstream pyme-react-frontend:5173;
         proxy_pass http://$frontend_upstream;
+
+        # Sólo el frontend conserva la página amigable; /api/ propaga el 503 real.
+        error_page 500 502 503 504 =200 /pyme/pyme_index.html;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -110,8 +127,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
-        proxy_set_header X-App-Slug $resolved_app_slug;
-        proxy_set_header X-Backend $resolved_backend;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;
@@ -205,15 +220,15 @@ server {
     proxy_read_timeout    30s;
     proxy_send_timeout    30s;
 
-    # ── Error catchment (server-level) ────────────────────────
-    error_page 500 502 503 504 =200 /pyme/pyme_index.html;
-
     # ══════════════════════════════════════════════════════════
     # STATIC ASSETS — Frontend SPA (NO ML check)
     # ══════════════════════════════════════════════════════════
     location / {
         set $frontend_upstream pyme-react-frontend:5173;
         proxy_pass http://$frontend_upstream;
+
+        # Sólo el frontend conserva la página amigable; /api/ propaga el 503 real.
+        error_page 500 502 503 504 =200 /pyme/pyme_index.html;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -264,8 +279,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
-        proxy_set_header X-App-Slug $resolved_app_slug;
-        proxy_set_header X-Backend $resolved_backend;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;
@@ -378,8 +391,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Original-URI $request_uri;
         proxy_set_header X-Original-Method $request_method;
-        proxy_set_header X-App-Slug $resolved_app_slug;
-        proxy_set_header X-Backend http://maderera-app:3000;
 
         proxy_connect_timeout 5s;
         proxy_read_timeout 60s;

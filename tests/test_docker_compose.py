@@ -271,3 +271,21 @@ def test_docker_compose_has_waf_dashboard_service():
     assert "JWT_SECRET" in env_dict, "waf-dashboard missing JWT_SECRET environment variable"
     assert "ML_ENGINE_URL" in env_dict, "waf-dashboard missing ML_ENGINE_URL environment variable"
 
+
+# ── Maderera uploads volume ──────────────────────────────────────────
+
+
+def test_maderera_app_mounts_images_volume():
+    """Maderera uploads must persist in a named volume, not the container layer."""
+    compose = load_compose()
+    svc = compose["services"]["maderera-app"]
+    volumes = svc.get("volumes", [])
+
+    assert "maderera_images:/var/lib/maderera-sjt/images" in volumes, (
+        "maderera-app must mount maderera_images at /var/lib/maderera-sjt/images, "
+        f"got {volumes}"
+    )
+    assert "maderera_images" in compose.get("volumes", {}), (
+        "maderera_images must be declared in top-level volumes"
+    )
+

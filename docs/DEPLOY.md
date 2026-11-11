@@ -15,6 +15,31 @@ docker compose exec -T database sh -c \
 
 Guardar el archivo fuera del directorio del proyecto y comprobar que no está vacío.
 
+### 1.1 Backup de imágenes de maderera
+
+Los uploads de la maderera viven en el volumen nombrado `maderera_images`,
+montado en `/var/lib/maderera-sjt/images`. Respaldarlo antes de actualizar:
+
+```bash
+docker run --rm \
+  -v waf-ml-project_maderera_images:/data:ro \
+  -v "$PWD":/backup \
+  alpine sh -c 'tar czf /backup/maderera_images_$(date +%Y%m%d_%H%M%S).tar.gz -C /data .'
+```
+
+El nombre real puede variar con el proyecto Compose; confirmarlo con
+`docker volume ls | grep maderera_images`. Guardar el `.tar.gz` fuera del
+directorio del proyecto.
+
+Para restaurar:
+
+```bash
+docker run --rm \
+  -v waf-ml-project_maderera_images:/data \
+  -v "$PWD":/backup \
+  alpine sh -c 'tar xzf /backup/maderera_images_YYYYMMDD_HHMMSS.tar.gz -C /data'
+```
+
 ## 2. Revisar el `.env` del VPS
 
 `WAF_ENV` debe definirse explícitamente en el `.env` del VPS. No depender del
@@ -128,6 +153,10 @@ docker compose up -d --build
 
 ## Limitaciones y cuidados
 
+- **`docker compose down -v`**: nunca usarlo en producción. El flag `-v`
+  elimina los volúmenes nombrados, incluido `maderera_images` (uploads de la
+  maderera) y `waf_db_data`. Para reiniciar sin borrar datos, usar
+  `docker compose down` sin `-v`.
 - **Rotar `MADERERA_AUTH_SECRET`**: generar un valor nuevo con
   `openssl rand -hex 32`, actualizarlo en el `.env` del VPS y en la app
   maderera, y reiniciar ambos servicios. La rotación invalida las sesiones

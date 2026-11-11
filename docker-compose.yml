@@ -93,6 +93,10 @@ services:
       - WAF_ENV=${WAF_ENV:-production}
       - WAF_DOMAIN=${WAF_DOMAIN:-localhost}
       - WAF_UNKNOWN_HOST_FALLBACK=${WAF_UNKNOWN_HOST_FALLBACK:-false}
+      # Uploads multipart exentos de inspección de cuerpo, por app.
+      - WAF_UPLOAD_PATHS=${WAF_UPLOAD_PATHS:-maderera=/api/uploads}
+      - WAF_MULTIPART_MAX_BYTES=${WAF_MULTIPART_MAX_BYTES:-10485760}
+      - WAF_MAX_DB_PAYLOAD_CHARS=${WAF_MAX_DB_PAYLOAD_CHARS:-8192}
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no esta definida en .env}
       - BACKEND_ALLOWLIST=${BACKEND_ALLOWLIST:-http://pyme-php-backend:80,http://maderera-app:3000}
     deploy:
@@ -232,6 +236,10 @@ services:
     networks:
       - waf-frontend
       - waf-backend
+    # Volumen obligatorio: los uploads viven en /var/lib/maderera-sjt/images.
+    # Sin este mount se pierden al recrear el contenedor.
+    volumes:
+      - maderera_images:/var/lib/maderera-sjt/images
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_PORT:-5432}/${DB_NAME}
       - AUTH_SECRET=${MADERERA_AUTH_SECRET:?MADERERA_AUTH_SECRET no esta definida en .env}
@@ -432,6 +440,8 @@ networks:
 
 volumes:
   waf_db_data:
+  # Uploads de maderera (imágenes). No borrar con `docker compose down -v`.
+  maderera_images:
   pyme_mysql_data:
   certbot-etc:
   certbot-webroot:

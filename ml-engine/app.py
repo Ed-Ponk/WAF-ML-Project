@@ -134,6 +134,97 @@ def _env_flag(name: str, default: bool = False) -> bool:
     return value in ("1", "true", "yes", "on")
 
 
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int((os.getenv(name, "") or "").strip())
+    except (TypeError, ValueError):
+        return default
+
+
+# ── Exención acotada de cuerpo multipart en rutas de upload ────────
+# Formato: "slug=/ruta1|/ruta2;otro-slug=/ruta". Sólo estas rutas, para
+# la app indicada, evitan pasar el cuerpo binario a extract_features.
+# El resto del tráfico (incluido multipart en otras rutas) se inspecciona
+# igual. El marcador conserva el tamaño sin exponer bytes binarios.
+def _normalize_upload_path(value: str) -> str:
+    path = (value or "").strip()
+    if not path:
+        return ""
+    if not path.startswith("/"):
+        path = "/" + path
+    if len(path) > 1:
+        path = path.rstrip("/")
+    return path
+
+
+def _parse_upload_paths(raw: str) -> Dict[str, Tuple[str, ...]]:
+    parsed: Dict[str, Tuple[str, ...]] = {}
+    for entry in (raw or "").split(";"):
+        entry = entry.strip()
+        if not entry or "=" not in entry:
+            continue
+        slug, paths_raw = entry.split("=", 1)
+        slug = slug.strip().lower()
+        paths = tuple(
+            path
+            for path in (
+                _normalize_upload_path(part)
+                for part in paths_raw.split("|")
+            )
+            if path
+        )
+        if slug and paths:
+            parsed[slug] = paths
+    return parsed
+
+
+UPLOAD_PATHS_BY_SLUG = _parse_upload_paths(os.getenv("WAF_UPLOAD_PATHS", ""))
+MULTIPART_MAX_BYTES = _env_int("WAF_MULTIPART_MAX_BYTES", 10 * 1024 * 1024)
+MAX_DB_PAYLOAD_CHARS = _env_int("WAF_MAX_DB_PAYLOAD_CHARS", 8192)
+
+
+def _content_type_is_multipart(value: str) -> bool:
+    return (value or "").split(";", 1)[0].strip().lower() == "multipart/form-data"
+
+
+def _path_is_upload_route(app: Dict[str, Any], path: str) -> bool:
+    slug = str(app.get("slug", "") or "").strip().lower()
+    prefixes = UPLOAD_PATHS_BY_SLUG.get(slug, ())
+    normalized_path = path or "/"
+    for prefix in prefixes:
+        if prefix == "/":
+            return True
+        if normalized_path == prefix or normalized_path.startswith(prefix + "/"):
+            return True
+    return False
+
+
+def _should_exempt_multipart_body(
+    app: Dict[str, Any], path: str, content_type: str, body_len: int
+) -> bool:
+    return (
+        _content_type_is_multipart(content_type)
+        and _path_is_upload_route(app, path)
+        and 0 <= body_len <= MULTIPART_MAX_BYTES
+    )
+
+
+def _multipart_body_marker(body_len: int) -> str:
+    return f"[multipart {body_len} bytes]"
+
+
+def _sanitize_for_db(value: Any, max_chars: Optional[int] = None) -> str:
+    """Quita NUL y bytes inválidos antes de enviar texto a PostgreSQL."""
+    if value is None:
+        return ""
+    text = str(value).replace("\x00", "")
+    text = text.encode("utf-8", errors="replace").decode("utf-8", errors="replace")
+    limit = MAX_DB_PAYLOAD_CHARS if max_chars is None else max_chars
+    if limit > 0 and len(text) > limit:
+        text = text[:limit] + "...[truncated]"
+    return text
+
+
 UNKNOWN_HOST_FALLBACK = _env_flag("WAF_UNKNOWN_HOST_FALLBACK", False)
 
 # Hostnames internos del stack que nunca pueden ser backend de una app.
@@ -743,6 +834,11 @@ async def startup():
     else:
         # Cargar cache de apps ANTES de aceptar requests (bloqueante)
         await load_apps_cache(force=True)
+        print(
+            f"⚙️ Multipart config: paths={UPLOAD_PATHS_BY_SLUG} "
+            f"max_bytes={MULTIPART_MAX_BYTES} "
+            f"max_db_payload_chars={MAX_DB_PAYLOAD_CHARS}"
+        )
         # Lanzar refresh periódico
         asyncio.create_task(refresh_apps_cache_loop())
         # Iniciar background polling de hardware
@@ -981,27 +1077,44 @@ async def waf_core(request: Request, path_name: str):
     f_dict = {"url_path_len": 0, "payload_entropy": 0}
     score = 0.50
 
+    content_type = request.headers.get("content-type", "")
     try:
         body = await asyncio.wait_for(request.body(), timeout=1.0)
-        payload = body.decode("utf-8", errors="ignore") 
-
-        # ── Parseo POST form-urlencoded (v2.0) ─────────────────────
-        # Extraer solo los VALUES para que extract_features no diluya
-        # la señal de ataque con los nombres de campo.
-        # Ej: "email=admin' OR 1=1--&password=123" → "admin' OR 1=1-- 123"
-        values_only = payload
         extra_features = {}
-        if payload and request.method in ("POST", "PUT"):
-            try:
-                params = parse_qs(payload)
-                if params:
-                    values = [v[0] for v in params.values()]
-                    values_only = " ".join(values)
-                    extra_features["body_is_form"] = 1
-                    extra_features["max_field_value_len"] = max(len(v) for v in values)
-                    extra_features["body_field_count"] = len(params)
-            except Exception:
-                pass  # fallback: body plano
+
+        if _should_exempt_multipart_body(
+            resolved_app, request.url.path, content_type, len(body)
+        ):
+            # Upload binario legítimo: no inspeccionar el cuerpo. El marcador
+            # conserva el tamaño para features sin exponer bytes binarios.
+            payload = _multipart_body_marker(len(body))
+            values_only = payload
+            extra_features["body_is_multipart"] = 1
+            extra_features["multipart_body_bytes"] = len(body)
+            print(
+                f"⚡ Multipart upload exento de body inspection: "
+                f"app={resolved_app.get('slug')} path={request.url.path} "
+                f"bytes={len(body)}"
+            )
+        else:
+            payload = body.decode("utf-8", errors="ignore")
+
+            # ── Parseo POST form-urlencoded (v2.0) ─────────────────
+            # Extraer solo los VALUES para que extract_features no diluya
+            # la señal de ataque con los nombres de campo.
+            # Ej: "email=admin' OR 1=1--&password=123" → "admin' OR 1=1-- 123"
+            values_only = payload
+            if payload and request.method in ("POST", "PUT"):
+                try:
+                    params = parse_qs(payload)
+                    if params:
+                        values = [v[0] for v in params.values()]
+                        values_only = " ".join(values)
+                        extra_features["body_is_form"] = 1
+                        extra_features["max_field_value_len"] = max(len(v) for v in values)
+                        extra_features["body_field_count"] = len(params)
+                except Exception:
+                    pass  # fallback: body plano
 
         # === DEBUG SIEMPRE ===
         print(f"\n🔍 DEBUG REQUEST: {request.method} {original_url}")
@@ -1217,6 +1330,11 @@ async def waf_core(request: Request, path_name: str):
 
 
 async def save_to_db(client_ip: str, user_agent: str, method: str, url_inspect: str, payload: str, score: float, verdict: int, action: str, latency: float, f_dict: dict, app_id: str):
+    # PostgreSQL TEXT no acepta NUL ni UTF-8 inválido. Saneamos siempre,
+    # incluso para eventos bloqueados, para no perder la telemetría.
+    payload = _sanitize_for_db(payload)
+    url_inspect = _sanitize_for_db(url_inspect)
+    user_agent = _sanitize_for_db(user_agent)
     # Validamos que el pool de conexiones exista antes de intentar usarlo
     if db_pool:
         try:
